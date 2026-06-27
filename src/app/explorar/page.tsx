@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getAllPlaces, getComunas, getTipos } from "@/lib/places";
+import { getAllPlaces } from "@/lib/places";
 import ExplorarClient from "./ExplorarClient";
 
 export const metadata: Metadata = {
@@ -8,12 +8,14 @@ export const metadata: Metadata = {
     "Explora cafés, coworkings y bibliotecas de Santiago. Filtra por WiFi, enchufes, ruido, precio y comuna, y revisa la congestión por horario.",
 };
 
-export default function ExplorarPage() {
-  // Datos cargados en el servidor desde el dataset y entregados al cliente,
+export default async function ExplorarPage() {
+  // Datos cargados en el servidor (Supabase o JSON) y entregados al cliente,
   // donde se aplican los filtros y se renderiza el mapa.
-  const places = getAllPlaces();
-  const comunas = getComunas();
-  const tipos = getTipos();
+  const places = await getAllPlaces();
+  const comunas = [...new Set(places.map((p) => p.comuna))].sort((a, b) =>
+    a.localeCompare(b, "es"),
+  );
+  const tipos = [...new Set(places.map((p) => p.tipo))];
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">

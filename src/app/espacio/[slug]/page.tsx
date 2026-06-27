@@ -14,8 +14,9 @@ import {
 import { getAllPlaces, getPlaceBySlug } from "@/lib/places";
 
 // Prerendera una página estática por cada espacio del dataset.
-export function generateStaticParams() {
-  return getAllPlaces().map((place) => ({ slug: place.slug }));
+export async function generateStaticParams() {
+  const places = await getAllPlaces();
+  return places.map((place) => ({ slug: place.slug }));
 }
 
 type EspacioProps = { params: Promise<{ slug: string }> };
@@ -24,7 +25,7 @@ export async function generateMetadata({
   params,
 }: EspacioProps): Promise<Metadata> {
   const { slug } = await params;
-  const place = getPlaceBySlug(slug);
+  const place = await getPlaceBySlug(slug);
   if (!place) return { title: "Espacio no encontrado · Studio Spot" };
   return {
     title: `${place.nombre} · Studio Spot`,
@@ -36,7 +37,7 @@ export async function generateMetadata({
 
 export default async function EspacioPage({ params }: EspacioProps) {
   const { slug } = await params;
-  const place = getPlaceBySlug(slug);
+  const place = await getPlaceBySlug(slug);
 
   if (!place) notFound();
 

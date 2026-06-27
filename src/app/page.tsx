@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { getAllPlaces } from "@/lib/places";
 
-export default function Home() {
-  const total = getAllPlaces().length;
+export default async function Home() {
+  const places = await getAllPlaces();
+  const total = places.length;
 
   return (
     <div>

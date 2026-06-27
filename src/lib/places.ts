@@ -1,39 +1,52 @@
 // Capa de acceso a datos de Studio Spot.
 //
-// Para el MVP la app lee directamente desde `src/data/places.json` (dataset real de
-// 32 lugares de Santiago), así corre de inmediato sin base de datos ni variables de
-// entorno. A futuro, estas funciones se reemplazarían por queries a Supabase contra
-// la tabla `places` (p. ej. `supabase.from("places").select("*")`), manteniendo la
-// misma firma para no tocar las páginas que las consumen.
+// Si están definidas las variables de entorno de Supabase, los datos se leen desde
+// la tabla `places` (lectura pública vía RLS, usando la anon key). Si NO lo están
+// —o si la query falla— se cae con elegancia al dataset local `src/data/places.json`,
+// de modo que la app siempre funciona (en build y en runtime).
+//
+// Se usa un cliente liviano de solo-lectura (sin cookies) para que también funcione
+// en build time, p. ej. dentro de generateStaticParams.
 
+import { createClient } from "@supabase/supabase-js";
 import placesData from "@/data/places.json";
-import type { Franja, Nivel3, NivelPrecio, NivelRuido, Place, PlaceType } from "@/lib/types";
+import type { Nivel3, NivelPrecio, NivelRuido, Place, PlaceType, Franja } from "@/lib/types";
 
-// El JSON está tipado de forma laxa al importarse; lo afirmamos al tipo del dominio.
 const PLACES = placesData as Place[];
 
-/** Devuelve todos los espacios del dataset. */
-export function getAllPlaces(): Place[] {
-  // A futuro: const { data } = await supabase.from("places").select("*");
-  return PLACES;
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+const supabase =
+  SUPABASE_URL && SUPABASE_ANON ? createClient(SUPABASE_URL, SUPABASE_ANON) : null;
+
+/** ¿La app está leyendo desde Supabase (true) o desde el JSON local (false)? */
+export const usingSupabase = supabase !== null;
+
+/** Devuelve todos los espacios, ordenados por nombre. */
+export async function getAllPlaces(): Promise<Place[]> {
+  if (!supabase) return PLACES;
+  const { data, error } = await supabase.from("places").select("*").order("nombre");
+  if (error || !data) {
+    console.error("[places] Supabase getAllPlaces falló, usando JSON:", error?.message);
+    return PLACES;
+  }
+  return data as Place[];
 }
 
 /** Devuelve un espacio por su slug, o `undefined` si no existe. */
-export function getPlaceBySlug(slug: string): Place | undefined {
-  // A futuro: supabase.from("places").select("*").eq("slug", slug).single();
-  return PLACES.find((p) => p.slug === slug);
-}
-
-/** Lista de comunas únicas presentes en el dataset, ordenadas alfabéticamente. */
-export function getComunas(): string[] {
-  return [...new Set(PLACES.map((p) => p.comuna))].sort((a, b) =>
-    a.localeCompare(b, "es"),
-  );
-}
-
-/** Lista de tipos únicos presentes en el dataset. */
-export function getTipos(): PlaceType[] {
-  return [...new Set(PLACES.map((p) => p.tipo))];
+export async function getPlaceBySlug(slug: string): Promise<Place | undefined> {
+  if (!supabase) return PLACES.find((p) => p.slug === slug);
+  const { data, error } = await supabase
+    .from("places")
+    .select("*")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (error) {
+    console.error("[places] Supabase getPlaceBySlug falló, usando JSON:", error.message);
+    return PLACES.find((p) => p.slug === slug);
+  }
+  return (data as Place | null) ?? undefined;
 }
 
 // --- Filtros (se aplican en cliente sobre el dataset ya cargado) ---
