@@ -24,6 +24,10 @@ import { createClient } from "@/lib/supabase/server";
 const PUBLIC_MENU_PREFIX = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/menu/`;
 
 export type MenuItemFormState = {
+  // `ok: true` solo en un guardado exitoso. Permite al formulario distinguir el
+  // estado inicial ({}) de un envío correcto (revalidación ya hecha en servidor)
+  // y cerrar/limpiar el panel sin confundirlo con el primer render.
+  ok?: true;
   error?: string;
   fieldErrors?: Record<string, string>;
 };
@@ -132,7 +136,7 @@ export async function crearItem(
   }
 
   revalidarMenu(placeId, place.slug);
-  return {};
+  return { ok: true };
 }
 
 /** Edita un ítem de menú de un espacio propio. */
@@ -165,7 +169,7 @@ export async function actualizarItem(
   if (!data) return { error: "No encontramos el ítem." };
 
   revalidarMenu(placeId, place.slug);
-  return {};
+  return { ok: true };
 }
 
 /** Activa/desactiva un ítem (control de visibilidad pública sin borrarlo). */
