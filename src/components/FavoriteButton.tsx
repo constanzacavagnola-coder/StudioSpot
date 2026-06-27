@@ -132,18 +132,27 @@ export default function FavoriteButton({
   }
 
   return (
-    <button
-      type="button"
-      onClick={onToggle}
-      disabled={pending}
-      aria-pressed={favorite}
-      aria-label={label}
-      title={favorite ? "Quitar de mis lugares" : "Guardar en mis lugares"}
-      className={`grid h-9 w-9 place-items-center rounded-full bg-white/90 shadow-sm ring-1 ring-stone-200 backdrop-blur transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 disabled:opacity-60 ${
-        favorite ? "text-rose-500 hover:text-rose-600" : "text-stone-400 hover:text-rose-500"
-      } ${className}`}
-    >
-      <HeartIcon filled={favorite} className="h-5 w-5" />
-    </button>
+    <>
+      <button
+        type="button"
+        onClick={onToggle}
+        disabled={pending}
+        aria-pressed={favorite}
+        aria-label={label}
+        title={error ?? (favorite ? "Quitar de mis lugares" : "Guardar en mis lugares")}
+        className={`grid h-9 w-9 place-items-center rounded-full bg-white/90 shadow-sm ring-1 backdrop-blur transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 disabled:opacity-60 ${
+          error ? "ring-rose-300" : "ring-stone-200"
+        } ${
+          favorite ? "text-rose-500 hover:text-rose-600" : "text-stone-400 hover:text-rose-500"
+        } ${className}`}
+      >
+        <HeartIcon filled={favorite} className="h-5 w-5" />
+      </button>
+      {/* Feedback de error accesible: la variante "card" no tiene espacio para un
+          texto inline, así que se anuncia por lector de pantalla (y vía title). */}
+      <span role="status" aria-live="polite" className="sr-only">
+        {error ?? ""}
+      </span>
+    </>
   );
 }

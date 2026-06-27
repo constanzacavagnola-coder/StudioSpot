@@ -82,7 +82,10 @@ export default function ClaimList({ places }: { places: Place[] }) {
         />
       </div>
 
-      <div aria-live="polite">
+      {/* Sin aria-live en el contenedor: cada hijo es su propia región viva
+          (role alert / status) para no anidar live regions y evitar el doble
+          anuncio en algunos lectores. */}
+      <div>
         {error ? (
           <p role="alert" className="text-sm text-rose-600">
             {error}
@@ -117,7 +120,8 @@ export default function ClaimList({ places }: { places: Place[] }) {
               <button
                 type="button"
                 onClick={() => onReclamar(place)}
-                disabled={isPending}
+                disabled={cargando}
+                aria-busy={cargando}
                 className="shrink-0 rounded-lg bg-brand px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {cargando ? "Reclamando…" : "Reclamar"}

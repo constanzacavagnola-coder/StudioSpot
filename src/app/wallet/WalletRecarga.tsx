@@ -55,11 +55,11 @@ export default function WalletRecarga() {
         })}
       </div>
 
+      {/* El contenedor es la única región viva (polite); los hijos no llevan
+          role propio para no anidar live regions ni duplicar el anuncio. */}
       <div aria-live="polite" className="mt-3 min-h-[1.25rem]">
         {error ? (
-          <p role="alert" className="text-sm text-rose-600">
-            {error}
-          </p>
+          <p className="text-sm text-rose-600">{error}</p>
         ) : exito ? (
           <p className="text-sm text-emerald-700">{exito}</p>
         ) : null}

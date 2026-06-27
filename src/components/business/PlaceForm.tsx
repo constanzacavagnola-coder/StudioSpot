@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 import type { PlaceFormState } from "@/lib/business/actions";
@@ -83,8 +83,21 @@ export default function PlaceForm({ action, place, submitLabel }: Props) {
 
   const fe = state.fieldErrors ?? {};
 
+  const formRef = useRef<HTMLFormElement>(null);
+
+  // Tras un envío que vuelve con errores de validación, llevar el foco al primer
+  // campo inválido. En un formulario largo el usuario no tiene que buscar dónde
+  // falló (a11y: acc M2 / ui-ux M4). Se reejecuta en cada respuesta de la Action
+  // porque `useActionState` devuelve un objeto `state` nuevo cada vez.
+  useEffect(() => {
+    if (!state.fieldErrors) return;
+    const primerInvalido =
+      formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]');
+    primerInvalido?.focus();
+  }, [state]);
+
   return (
-    <form action={formAction} className="space-y-8" noValidate>
+    <form ref={formRef} action={formAction} className="space-y-8" noValidate>
       {place ? <input type="hidden" name="id" value={place.id} /> : null}
 
       {state.error ? (
@@ -157,7 +170,7 @@ export default function PlaceForm({ action, place, submitLabel }: Props) {
             placeholder="-70.6506"
           />
         </div>
-        <p className="text-xs text-stone-400">
+        <p className="text-xs text-stone-500">
           Coordenadas en grados decimales. Puedes copiarlas desde Google Maps.
         </p>
 
@@ -364,7 +377,7 @@ function TextField({
       <label htmlFor={id} className="block text-sm font-medium text-stone-700">
         {label}
         {!required ? (
-          <span className="ml-1 font-normal text-stone-400">(opcional)</span>
+          <span className="ml-1 font-normal text-stone-500">(opcional)</span>
         ) : null}
       </label>
       <input
@@ -404,7 +417,7 @@ function TextAreaField({
       <label htmlFor={id} className="block text-sm font-medium text-stone-700">
         {label}
         {!required ? (
-          <span className="ml-1 font-normal text-stone-400">(opcional)</span>
+          <span className="ml-1 font-normal text-stone-500">(opcional)</span>
         ) : null}
       </label>
       <textarea
