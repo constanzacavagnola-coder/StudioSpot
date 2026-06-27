@@ -6,7 +6,7 @@
  *
  * Accesibilidad:
  *  - Decorativo (default): se renderiza con `aria-hidden` y `focusable={false}`.
- *  - Con significado: pasar `label` → se expone `role="img"` + `aria-label`.
+ *  - Con significado: pasar `label` se expone `role="img"` + `aria-label`.
  *
  * Todos heredan el color con `currentColor` y el tamaño con la clase
  * (`h-* w-*`) o la prop `size`. Trazo 1.8 para un look pastel/redondeado.
@@ -45,7 +45,7 @@ function SvgBase({ label, size, children, ...rest }: IconProps & { children: Rea
 
 /* ---- Tipos de espacio ---- */
 
-// ☕ Café
+// Café
 export function CafeIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -57,7 +57,7 @@ export function CafeIcon(p: IconProps) {
   );
 }
 
-// 💼 Coworking (maletín)
+// Coworking (maletín)
 export function CoworkingIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -68,7 +68,7 @@ export function CoworkingIcon(p: IconProps) {
   );
 }
 
-// 📚 Biblioteca (libros)
+// Biblioteca (libros)
 export function BibliotecaIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -81,7 +81,7 @@ export function BibliotecaIcon(p: IconProps) {
 
 /* ---- Atributos / mapa ---- */
 
-// 📍 Pin de ubicación
+// Pin de ubicación
 export function PinIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -91,7 +91,7 @@ export function PinIcon(p: IconProps) {
   );
 }
 
-// 🔌 Enchufe
+// Enchufe
 export function EnchufeIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -102,7 +102,7 @@ export function EnchufeIcon(p: IconProps) {
   );
 }
 
-// 📶 WiFi
+// WiFi
 export function WifiIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -114,7 +114,7 @@ export function WifiIcon(p: IconProps) {
   );
 }
 
-// 📡 Antena / WiFi dedicado
+// Antena / WiFi dedicado
 export function AntenaIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -126,7 +126,7 @@ export function AntenaIcon(p: IconProps) {
   );
 }
 
-// 🔊 Ruido (volumen)
+// Ruido (volumen)
 export function RuidoIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -136,7 +136,7 @@ export function RuidoIcon(p: IconProps) {
   );
 }
 
-// 💰 Precio (moneda)
+// Precio (moneda)
 export function PrecioIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -146,7 +146,7 @@ export function PrecioIcon(p: IconProps) {
   );
 }
 
-// 🕒 Reloj (congestión por horario)
+// Reloj (congestión por horario)
 export function RelojIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -156,7 +156,7 @@ export function RelojIcon(p: IconProps) {
   );
 }
 
-// 🗺 Mapa
+// Mapa
 export function MapaIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -168,7 +168,7 @@ export function MapaIcon(p: IconProps) {
 
 /* ---- Personas / cuentas ---- */
 
-// 👥 Comunidad (usuarios)
+// Comunidad (usuarios)
 export function ComunidadIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -179,7 +179,7 @@ export function ComunidadIcon(p: IconProps) {
   );
 }
 
-// 🏢 Empresa (edificio)
+// Empresa (edificio)
 export function EmpresaIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -191,7 +191,7 @@ export function EmpresaIcon(p: IconProps) {
   );
 }
 
-// 🎒 Mochila (estudiante)
+// Mochila (estudiante)
 export function MochilaIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -204,7 +204,7 @@ export function MochilaIcon(p: IconProps) {
 
 /* ---- Premium / wallet ---- */
 
-// 👛 Wallet
+// Wallet
 export function WalletIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -215,7 +215,7 @@ export function WalletIcon(p: IconProps) {
   );
 }
 
-// 🪑 Silla (espacio reservado)
+// Silla (espacio reservado)
 export function SillaIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -226,7 +226,7 @@ export function SillaIcon(p: IconProps) {
   );
 }
 
-// ✨ Destello (premium / marca)
+// Destello (premium / marca)
 export function DestelloIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -239,7 +239,7 @@ export function DestelloIcon(p: IconProps) {
 
 /* ---- Genéricos / UI ---- */
 
-// 🔎 Lupa (buscar / reclamar)
+// Lupa (buscar / reclamar)
 export function LupaIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -249,7 +249,7 @@ export function LupaIcon(p: IconProps) {
   );
 }
 
-// ⚠ Alerta
+// Alerta
 export function AlertaIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -260,7 +260,7 @@ export function AlertaIcon(p: IconProps) {
   );
 }
 
-// ✓ / ✅ Check
+// Check (visto)
 export function CheckIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -269,7 +269,7 @@ export function CheckIcon(p: IconProps) {
   );
 }
 
-// ✓ dentro de círculo (estado confirmado)
+// dentro de círculo (estado confirmado)
 export function CheckCircleIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -279,7 +279,7 @@ export function CheckCircleIcon(p: IconProps) {
   );
 }
 
-// ❤ / 🤍 Corazón (favorito). `filled` rellena el trazo.
+// Corazón (favorito). `filled` rellena el trazo.
 export function CorazonIcon({ filled, ...p }: IconProps & { filled?: boolean }) {
   return (
     <SvgBase {...p} fill={filled ? "currentColor" : "none"}>
@@ -288,7 +288,7 @@ export function CorazonIcon({ filled, ...p }: IconProps & { filled?: boolean }) 
   );
 }
 
-// ▾ Chevron abajo
+// Chevron abajo
 export function ChevronDownIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -297,7 +297,7 @@ export function ChevronDownIcon(p: IconProps) {
   );
 }
 
-// ← Flecha izquierda
+// Flecha izquierda
 export function FlechaIzquierdaIcon(p: IconProps) {
   return (
     <SvgBase {...p}>
@@ -306,7 +306,7 @@ export function FlechaIzquierdaIcon(p: IconProps) {
   );
 }
 
-// → Flecha derecha
+// Flecha derecha
 export function FlechaDerechaIcon(p: IconProps) {
   return (
     <SvgBase {...p}>

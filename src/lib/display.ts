@@ -1,6 +1,7 @@
 // Etiquetas y estilos de presentación compartidos entre componentes.
 // Centralizado para mantener coherencia visual y de copy en español.
 
+import type { IconName } from "@/components/icons";
 import type {
   Franja,
   Nivel3,
@@ -17,10 +18,12 @@ export const TIPO_LABEL: Record<PlaceType, string> = {
   biblioteca: "Biblioteca",
 };
 
-export const TIPO_EMOJI: Record<PlaceType, string> = {
-  cafe: "☕",
-  coworking: "💼",
-  biblioteca: "📚",
+// Ícono SVG por tipo de espacio (reemplaza los antiguos emojis; regla de UI:
+// nada de emojis, solo íconos del set en src/components/icons).
+export const TIPO_ICON: Record<PlaceType, IconName> = {
+  cafe: "cafe",
+  coworking: "coworking",
+  biblioteca: "biblioteca",
 };
 
 export const NIVEL3_LABEL: Record<Nivel3, string> = {
@@ -58,18 +61,19 @@ export const FRANJA_HORARIO: Record<Franja, string> = {
 
 export const FRANJAS_ORDEN: Franja[] = ["mañana", "mediodia", "tarde", "noche"];
 
-// Clases Tailwind para el nivel de congestión (bajo=verde, medio=amarillo, alto=rojo).
+// Clases Tailwind para el nivel de congestión, en tonos pastel de la paleta:
+// bajo→menta, medio→durazno, alto→terracota suave (semántica conservada).
 export const CONGESTION_CLASES: Record<Nivel3, string> = {
-  bajo: "bg-emerald-100 text-emerald-800 ring-emerald-200",
-  medio: "bg-amber-100 text-amber-800 ring-amber-200",
-  alto: "bg-rose-100 text-rose-800 ring-rose-200",
+  bajo: "bg-cong-bajo/15 text-cong-bajo ring-cong-bajo/25",
+  medio: "bg-cong-medio/15 text-cong-medio ring-cong-medio/25",
+  alto: "bg-cong-alto/15 text-cong-alto ring-cong-alto/25",
 };
 
 // Color sólido (para barras/puntos) por nivel de congestión.
 export const CONGESTION_PUNTO: Record<Nivel3, string> = {
-  bajo: "bg-emerald-500",
-  medio: "bg-amber-500",
-  alto: "bg-rose-500",
+  bajo: "bg-cong-bajo",
+  medio: "bg-cong-medio",
+  alto: "bg-cong-alto",
 };
 
 export const CONGESTION_LABEL: Record<Nivel3, string> = {
