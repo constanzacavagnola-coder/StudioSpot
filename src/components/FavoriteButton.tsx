@@ -67,7 +67,7 @@ export default function FavoriteButton({
         <Link
           href={href}
           title="Inicia sesión para guardar este lugar"
-          className={`inline-flex items-center gap-2 rounded-xl border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-700 transition-colors hover:border-brand/40 hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${className}`}
+          className={`inline-flex items-center gap-2 rounded-xl border border-border-warm px-4 py-2 text-sm font-semibold text-ink-2 transition-colors hover:border-brand/40 hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${className}`}
         >
           <HeartIcon filled={false} className="h-4 w-4" />
           Guardar
@@ -79,7 +79,7 @@ export default function FavoriteButton({
         href={href}
         aria-label={`Inicia sesión para guardar ${placeName}`}
         title="Inicia sesión para guardar"
-        className={`grid h-9 w-9 place-items-center rounded-full bg-white/90 text-stone-400 shadow-sm ring-1 ring-stone-200 backdrop-blur transition-colors hover:text-rose-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${className}`}
+        className={`grid h-9 w-9 place-items-center rounded-full bg-surface/90 text-ink-3 shadow-sm ring-1 ring-border-warm backdrop-blur transition-colors hover:text-rose-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${className}`}
       >
         <HeartIcon filled={false} className="h-5 w-5" />
       </Link>
@@ -116,7 +116,7 @@ export default function FavoriteButton({
           className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 disabled:opacity-60 ${
             favorite
               ? "border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100"
-              : "border-stone-300 text-stone-700 hover:border-brand/40 hover:text-brand"
+              : "border-border-warm text-ink-2 hover:border-brand/40 hover:text-brand"
           }`}
         >
           <HeartIcon filled={favorite} className="h-4 w-4" />
@@ -140,10 +140,10 @@ export default function FavoriteButton({
         aria-pressed={favorite}
         aria-label={label}
         title={error ?? (favorite ? "Quitar de mis lugares" : "Guardar en mis lugares")}
-        className={`grid h-9 w-9 place-items-center rounded-full bg-white/90 shadow-sm ring-1 backdrop-blur transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 disabled:opacity-60 ${
-          error ? "ring-rose-300" : "ring-stone-200"
+        className={`grid h-9 w-9 place-items-center rounded-full bg-surface/90 shadow-sm ring-1 backdrop-blur transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 disabled:opacity-60 ${
+          error ? "ring-rose-300" : "ring-border-warm"
         } ${
-          favorite ? "text-rose-500 hover:text-rose-600" : "text-stone-400 hover:text-rose-500"
+          favorite ? "text-rose-500 hover:text-rose-600" : "text-ink-3 hover:text-rose-500"
         } ${className}`}
       >
         <HeartIcon filled={favorite} className="h-5 w-5" />

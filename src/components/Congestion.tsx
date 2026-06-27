@@ -22,7 +22,7 @@ export function CongestionBadge({
   const nivel = congestion[franja];
   if (!nivel) {
     return (
-      <Badge className="bg-stone-100 text-stone-500 ring-stone-200">
+      <Badge className="bg-background-alt text-ink-2 ring-border-warm">
         {mostrarFranja ? `${FRANJA_LABEL[franja]}: ` : ""}sin dato
       </Badge>
     );
@@ -45,12 +45,12 @@ export function CongestionDia({ congestion }: { congestion: Congestion }) {
         return (
           <div
             key={franja}
-            className="rounded-xl border border-stone-200 bg-white p-3 text-center"
+            className="rounded-xl border border-border-warm bg-surface p-3 text-center"
           >
-            <p className="text-sm font-semibold text-stone-800">
+            <p className="text-sm font-semibold text-ink">
               {FRANJA_LABEL[franja]}
             </p>
-            <p className="mb-2 text-xs text-stone-400">{FRANJA_HORARIO[franja]}</p>
+            <p className="mb-2 text-xs text-ink-3">{FRANJA_HORARIO[franja]}</p>
             {nivel ? (
               <div
                 className={`mx-auto flex items-center justify-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium ring-1 ring-inset ${CONGESTION_CLASES[nivel]}`}
@@ -62,7 +62,7 @@ export function CongestionDia({ congestion }: { congestion: Congestion }) {
                 {CONGESTION_LABEL[nivel]}
               </div>
             ) : (
-              <div className="rounded-lg bg-stone-100 px-2 py-1.5 text-sm text-stone-400">
+              <div className="rounded-lg bg-background-alt px-2 py-1.5 text-sm text-ink-3">
                 sin dato
               </div>
             )}

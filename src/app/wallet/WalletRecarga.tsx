@@ -47,7 +47,7 @@ export default function WalletRecarga() {
               onClick={() => onRecargar(monto)}
               disabled={pending}
               aria-label={`Recargar ${formatCLP(monto)} de saldo de demostración`}
-              className="inline-flex items-center justify-center rounded-xl border border-brand/30 bg-white px-4 py-3 text-sm font-semibold text-brand transition-colors hover:border-brand hover:bg-brand/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex items-center justify-center rounded-xl border border-brand/30 bg-surface px-4 py-3 text-sm font-semibold text-brand transition-colors hover:border-brand hover:bg-brand/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {cargando ? "Recargando…" : `+ ${formatCLP(monto)}`}
             </button>

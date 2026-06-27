@@ -27,10 +27,10 @@ export default async function ExplorarPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <header className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight text-stone-900">
+        <h1 className="text-3xl font-bold tracking-tight text-ink">
           Explorar espacios
         </h1>
-        <p className="mt-1 text-stone-600">
+        <p className="mt-1 text-ink-2">
           {places.length} espacios en Santiago. Filtra y encuentra tu lugar ideal.
         </p>
       </header>

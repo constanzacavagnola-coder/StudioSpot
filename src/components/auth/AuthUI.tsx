@@ -32,7 +32,7 @@ export function Field({
   const errorId = `${id}-error`;
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-stone-700">
+      <label htmlFor={id} className="block text-sm font-medium text-ink-2">
         {label}
       </label>
       <input
@@ -45,10 +45,10 @@ export function Field({
         required={required}
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? errorId : undefined}
-        className={`mt-1 w-full rounded-lg border bg-white px-3 py-2 text-sm text-stone-900 shadow-sm transition-colors placeholder:text-stone-400 focus:outline-none focus-visible:ring-2 ${
+        className={`mt-1 w-full rounded-lg border bg-surface px-3 py-2 text-sm text-ink shadow-sm transition-colors placeholder:text-ink-3 focus:outline-none focus-visible:ring-2 ${
           error
             ? "border-rose-300 focus-visible:ring-rose-300"
-            : "border-stone-300 focus-visible:ring-brand/40"
+            : "border-border-warm focus-visible:ring-brand/40"
         }`}
       />
       {error ? (

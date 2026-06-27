@@ -33,11 +33,11 @@ export default async function LoginPage({
 
   return (
     <div className="mx-auto flex max-w-md flex-col px-4 py-12 sm:px-6">
-      <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
-        <h1 className="text-2xl font-bold tracking-tight text-stone-900">
+      <div className="rounded-2xl border border-border-warm bg-surface p-6 shadow-sm sm:p-8">
+        <h1 className="text-2xl font-bold tracking-tight text-ink">
           Entra a tu cuenta
         </h1>
-        <p className="mt-1 text-sm text-stone-500">
+        <p className="mt-1 text-sm text-ink-2">
           Bienvenido de vuelta a Studio Spot.
         </p>
 
@@ -48,7 +48,7 @@ export default async function LoginPage({
           />
         </div>
 
-        <p className="mt-6 text-center text-sm text-stone-600">
+        <p className="mt-6 text-center text-sm text-ink-2">
           ¿No tienes cuenta?{" "}
           <Link href="/registro" className="font-semibold text-brand hover:underline">
             Regístrate

@@ -25,7 +25,7 @@ import type {
 const MapaEspacios = dynamic(() => import("@/components/MapaEspacios"), {
   ssr: false,
   loading: () => (
-    <div className="grid h-[420px] w-full place-items-center rounded-2xl border border-stone-200 bg-stone-50 text-stone-400">
+    <div className="grid h-[420px] w-full place-items-center rounded-2xl border border-border-warm bg-background-alt text-ink-3">
       Cargando mapa…
     </div>
   ),
@@ -84,7 +84,7 @@ export default function ExplorarClient({
   return (
     <div className="flex flex-col gap-6">
       {/* Filtros */}
-      <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
+      <div className="rounded-2xl border border-border-warm bg-surface p-4 shadow-sm">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <Selector
             label="Tipo"
@@ -131,8 +131,8 @@ export default function ExplorarClient({
         </div>
 
         <div className="mt-4 flex items-center justify-between">
-          <p className="text-sm text-stone-600">
-            <span className="font-semibold text-stone-900">{filtradas.length}</span>{" "}
+          <p className="text-sm text-ink-2">
+            <span className="font-semibold text-ink">{filtradas.length}</span>{" "}
             {filtradas.length === 1 ? "espacio" : "espacios"}
           </p>
           {hayFiltrosActivos && (
@@ -149,18 +149,18 @@ export default function ExplorarClient({
 
       {/* Mapa */}
       <section>
-        <h2 className="mb-3 text-lg font-semibold text-stone-900">Mapa</h2>
+        <h2 className="mb-3 text-lg font-semibold text-ink">Mapa</h2>
         <MapaEspacios places={filtradas} />
-        <p className="mt-2 text-xs text-stone-400">
+        <p className="mt-2 text-xs text-ink-3">
           Mapa con OpenStreetMap. Haz clic en un marcador para ver la ficha del lugar.
         </p>
       </section>
 
       {/* Listado */}
       <section>
-        <h2 className="mb-3 text-lg font-semibold text-stone-900">Listado</h2>
+        <h2 className="mb-3 text-lg font-semibold text-ink">Listado</h2>
         {filtradas.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-stone-300 bg-white p-10 text-center text-stone-500">
+          <div className="rounded-2xl border border-dashed border-border-warm bg-surface p-10 text-center text-ink-2">
             No hay espacios que coincidan con tus filtros. Prueba a relajar alguno.
           </div>
         ) : (
@@ -196,11 +196,11 @@ function Selector({
 }) {
   return (
     <label className="flex flex-col gap-1 text-sm">
-      <span className="font-medium text-stone-700">{label}</span>
+      <span className="font-medium text-ink-2">{label}</span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="rounded-lg border border-stone-300 bg-white px-3 py-2 text-stone-800 shadow-sm focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30"
+        className="rounded-lg border border-border-warm bg-surface px-3 py-2 text-ink shadow-sm focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30"
       >
         <option value={opcionTodos.value}>{opcionTodos.label}</option>
         {opciones.map((o) => (

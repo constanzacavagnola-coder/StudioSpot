@@ -111,7 +111,7 @@ export default function PlaceForm({ action, place, submitLabel }: Props) {
 
       {/* Datos básicos */}
       <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-stone-900">Datos básicos</h2>
+        <h2 className="text-lg font-semibold text-ink">Datos básicos</h2>
 
         <TextField
           id="nombre"
@@ -170,7 +170,7 @@ export default function PlaceForm({ action, place, submitLabel }: Props) {
             placeholder="-70.6506"
           />
         </div>
-        <p className="text-xs text-stone-500">
+        <p className="text-xs text-ink-2">
           Coordenadas en grados decimales. Puedes copiarlas desde Google Maps.
         </p>
 
@@ -186,7 +186,7 @@ export default function PlaceForm({ action, place, submitLabel }: Props) {
 
       {/* Atributos */}
       <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-stone-900">Atributos</h2>
+        <h2 className="text-lg font-semibold text-ink">Atributos</h2>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <SelectField
@@ -250,13 +250,13 @@ export default function PlaceForm({ action, place, submitLabel }: Props) {
           placeholder="De dónde proviene la información (opcional)"
         />
 
-        <label className="flex items-center gap-2 text-sm text-stone-700">
+        <label className="flex items-center gap-2 text-sm text-ink-2">
           <input
             type="checkbox"
             name="tiene_banos"
             checked={tieneBanos}
             onChange={(e) => setTieneBanos(e.target.checked)}
-            className="h-4 w-4 rounded border-stone-300 text-brand focus:ring-brand/40"
+            className="h-4 w-4 rounded border-border-warm text-brand focus:ring-brand/40"
           />
           El espacio cuenta con baños
         </label>
@@ -265,10 +265,10 @@ export default function PlaceForm({ action, place, submitLabel }: Props) {
       {/* Congestión por franja */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-stone-900">
+          <h2 className="text-lg font-semibold text-ink">
             Congestión por franja
           </h2>
-          <p className="mt-1 text-sm text-stone-500">
+          <p className="mt-1 text-sm text-ink-2">
             Qué tan lleno suele estar el espacio en cada momento del día (opcional).
           </p>
         </div>
@@ -294,11 +294,11 @@ export default function PlaceForm({ action, place, submitLabel }: Props) {
         </div>
       </section>
 
-      <div className="flex items-center gap-3 border-t border-stone-200 pt-6">
+      <div className="flex items-center gap-3 border-t border-border-warm pt-6">
         <SubmitButton label={submitLabel} />
         <Link
           href="/dashboard"
-          className="rounded-lg px-4 py-2.5 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/30"
+          className="rounded-lg px-4 py-2.5 text-sm font-medium text-ink-2 transition-colors hover:bg-background-alt hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/30"
         >
           Cancelar
         </Link>
@@ -334,13 +334,13 @@ function SubmitButton({ label }: { label: string }) {
 // ---- Campos reutilizables (controlados) ----
 
 const baseInput =
-  "mt-1 w-full rounded-lg border bg-white px-3 py-2 text-sm text-stone-900 shadow-sm transition-colors placeholder:text-stone-400 focus:outline-none focus-visible:ring-2";
+  "mt-1 w-full rounded-lg border bg-surface px-3 py-2 text-sm text-ink shadow-sm transition-colors placeholder:text-ink-3 focus:outline-none focus-visible:ring-2";
 
 function fieldClasses(error?: string) {
   return `${baseInput} ${
     error
       ? "border-rose-300 focus-visible:ring-rose-300"
-      : "border-stone-300 focus-visible:ring-brand/40"
+      : "border-border-warm focus-visible:ring-brand/40"
   }`;
 }
 
@@ -374,10 +374,10 @@ function TextField({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-stone-700">
+      <label htmlFor={id} className="block text-sm font-medium text-ink-2">
         {label}
         {!required ? (
-          <span className="ml-1 font-normal text-stone-500">(opcional)</span>
+          <span className="ml-1 font-normal text-ink-2">(opcional)</span>
         ) : null}
       </label>
       <input
@@ -414,10 +414,10 @@ function TextAreaField({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-stone-700">
+      <label htmlFor={id} className="block text-sm font-medium text-ink-2">
         {label}
         {!required ? (
-          <span className="ml-1 font-normal text-stone-500">(opcional)</span>
+          <span className="ml-1 font-normal text-ink-2">(opcional)</span>
         ) : null}
       </label>
       <textarea
@@ -427,7 +427,7 @@ function TextAreaField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className={`${baseInput} border-stone-300 focus-visible:ring-brand/40`}
+        className={`${baseInput} border-border-warm focus-visible:ring-brand/40`}
       />
     </div>
   );
@@ -454,7 +454,7 @@ function SelectField({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-stone-700">
+      <label htmlFor={id} className="block text-sm font-medium text-ink-2">
         {label}
       </label>
       <select
