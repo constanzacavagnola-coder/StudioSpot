@@ -1,54 +1,57 @@
-# Plan de evolución — Studio Spot
+# Plan de implementación — Studio Spot (features de cuenta)
 
-Roadmap de features acordadas. Las marcadas ⏳ están pendientes de implementar; ✅ ya están.
+> Contrato único para el loop multi-agente. Los agentes DEBEN ceñirse a esto.
+> Stack: Next.js 16 (App Router) + TS + Tailwind + `@supabase/ssr`. Gestor pnpm.
+> **Leer primero** `AGENTS.md`, `SECURITY.md` y los docs en `node_modules/next/dist/docs/` (Next 16 tiene breaking changes).
 
-## Estado actual (✅ hecho)
-- App Next.js 16 desplegada en Vercel: https://studio-spot.vercel.app (deploy directo por CLI).
-- Código en GitHub: https://github.com/constanzacavagnola-coder/StudioSpot (rama `main`).
-- Datos reales (32 espacios de Santiago) en **Supabase** (`bqojbvsvcnrokirhplcj`), tabla `places` con RLS de lectura pública. La app lee de Supabase con fallback a JSON.
-- Env vars en Vercel: `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` en Production y Development.
-- Auth emails: confirmación activa, `site_url` y allow-list apuntando a producción.
+## Estado base (ya hecho)
+- App desplegada, datos en Supabase (`places`), lectura con fallback JSON en `src/lib/places.ts`.
+- Esquema de cuentas YA APLICADO en Supabase (ver `supabase/migrations/0003_auth_favorites_wallet_business.sql`): tablas `profiles`, `favorites`, `wallet`, `wallet_tx`, `place_claims`, columna `places.owner_id`, función `claim_place(uuid)`. **No recrear el esquema; construir contra él.**
+- Auth emails: confirmación activa, `site_url`/allow-list a producción. Plantillas español en `supabase/email-templates/` (el usuario las pega en el dashboard).
 
-## Decisiones de producto
-- **Wallet = saldo ficticio / créditos demo.** NO maneja dinero real (sin pasarela ni cumplimiento legal); es una demostración del modelo de negocio. Los "descuentos" se simulan.
-- **Auth:** primero email + contraseña (Supabase); luego Google OAuth.
-- **Dos tipos de cuenta:** usuario final y empresa (dueño de un espacio). El dashboard de empresa permite editar el propio espacio.
+## Decisiones de producto (cerradas)
+- **Roles:** dos tipos de cuenta, `usuario` y `empresa`. Implementar **selección de rol en el registro Y flujos/áreas dedicadas por rol** (completo para cada rol). El rol viaja en `user_metadata.rol` al registrarse y lo persiste el trigger en `profiles`.
+- **Empresa↔espacio:** la empresa puede **reclamar** un espacio existente (`claim_place`) **y crear** uno nuevo (insert con `owner_id = auth.uid()`).
+- **Wallet:** **saldo de DEMO / créditos ficticios. NO dinero real.** Dejarlo explícito en la UI. Recargas y descuentos simulados (insert en `wallet_tx` + update de `wallet.saldo_clp`).
+- **Login:** email + contraseña con confirmación por correo. Google OAuth NO en esta iteración (queda preparado).
 
-## Fase 1 — Autenticación (email + contraseña) ⏳
-- Páginas `/login`, `/registro`, callback de confirmación; cierre de sesión.
-- Usar `@supabase/ssr` (clientes ya existen) + middleware para refrescar sesión.
-- Estado de sesión en el `Navbar` (entrar / mi cuenta / salir).
-- Migración: tabla `profiles` (id = auth.users.id, nombre, rol `usuario`|`empresa`, created_at) con RLS (cada quien lee/edita su perfil); trigger que crea el profile al registrarse.
+## Alcance de esta iteración del loop
+Implementar **todo** lo siguiente, completo y pulido (UX, accesibilidad, rendimiento, seguridad, consistencia). Los agentes exploradores/aprobadores pueden añadir mejoras razonables dentro de este alcance.
 
-## Fase 2 — Favoritos / "Mis lugares" (versión free) ⏳
-- Migración: tabla `favorites` (user_id, place_id, created_at, PK compuesta) con RLS por usuario.
-- Botón "guardar" en `PlaceCard` y en la ficha; página `/mis-lugares` con los guardados.
-- Requiere sesión (Fase 1).
+### F1 · Autenticación
+- `src/lib/supabase/` ya tiene client/server; añadir **middleware** (`src/middleware.ts`) que refresque la sesión (patrón `@supabase/ssr` para Next 16).
+- Páginas: `/login`, `/registro` (con selección de rol usuario/empresa), `/registro-empresa` (atajo directo al flujo empresa), ruta de callback de confirmación (`/auth/callback`), y logout.
+- `Navbar`: estado de sesión (entrar/registrarse vs. menú de cuenta con nombre + salir). Mostrar accesos según rol.
+- Helpers: `getSession()`/`getProfile()` server-side; proteger rutas privadas.
 
-## Fase 3 — Wallet demo ⏳
-- Migración: `wallet` (user_id, saldo_clp int) + `wallet_tx` (id, user_id, monto, tipo `recarga`|`descuento`, glosa, created_at), RLS por usuario.
-- Página `/wallet`: ver saldo, "recargar" (ficticio), historial de movimientos.
-- Dejar visualmente claro que es saldo de demostración.
+### F2 · Favoritos (usuario)
+- Botón "guardar" (corazón) en `PlaceCard` y en la ficha `/espacio/[slug]` (client component; insert/delete en `favorites`). Si no hay sesión, invita a entrar.
+- Página `/mis-lugares`: lista de favoritos del usuario.
 
-## Fase 4 — Google OAuth ⏳
-- Crear OAuth Client en Google Cloud (Authorized redirect URI: `https://bqojbvsvcnrokirhplcj.supabase.co/auth/v1/callback`).
-- Habilitar provider Google en Supabase (se puede vía Management API: `external_google_enabled`, client id/secret) — **requiere que el usuario provea client id + secret de Google**.
-- Botón "Continuar con Google" en `/login`.
+### F3 · Wallet demo (usuario)
+- Página `/wallet`: saldo actual, botón "recargar" (montos fijos, ficticio), historial (`wallet_tx`). Banner "saldo de demostración".
 
-## Fase 5 — Dashboard de empresa ⏳
-- Vincular un `place` a un dueño: columna `owner_id` en `places` (nullable) o tabla `place_owners`.
-- RLS: el dueño puede `update` su propio espacio; el público sigue con solo lectura.
-- `/dashboard`: el dueño edita atributos (enchufes, wifi, ruido, precio, horario) y **disponibilidad/congestión** por franja.
-- Flujo de "reclamar espacio" (claim) o alta manual de empresas.
+### F4 · Dashboard de empresa
+- `/dashboard` (solo rol empresa): lista de espacios del dueño (`places.owner_id = auth.uid()`).
+- **Reclamar:** buscador de los 32 espacios → `claim_place(place_id)`.
+- **Crear:** formulario de alta de espacio nuevo (mismos campos del esquema `places`).
+- **Editar:** atributos (enchufes, wifi, ruido, precio, horario, ambiente) y **congestión por franja** (jsonb).
 
-## Fase 6 — Infra y pulido ⏳
-- **SMTP propio** (ej. Resend/SendGrid) para plantillas de correo en español + límites de envío reales.
-- **Auto-deploy GitHub→Vercel**: instalar la Vercel GitHub App en el repo (requiere admin del repo) y conectar; habilita previews por PR.
-- **Env var de Preview** en Vercel (hoy faltó; se agrega en dashboard o con token del equipo).
-- **Loop de pulido multi-agente** (ver `.claude/skills/pulido-fino`) antes de un release.
+### F5 · Pulido transversal
+- Estados loading/empty/error en todas las vistas nuevas.
+- Accesibilidad (labels, foco, contraste), responsive, consistencia visual con la marca.
+- Seguridad: nunca exponer `service_role`; confiar en RLS; validar inputs.
+- `pnpm typecheck && pnpm lint && pnpm build` deben pasar.
 
-## Pendientes que dependen del usuario
-- Credenciales de **Google OAuth** (client id + secret) para Fase 4.
-- Proveedor **SMTP** para correos en español / volumen (Fase 6).
-- **Vercel GitHub App** autorizada en el repo (admin) para auto-deploy.
-- Token de Vercel **del equipo `tive-team`** si se quiere automatizar más por API (el actual es personal).
+## Reglas para el loop
+1. **Explorar → planificar → implementar → verificar → commit**, por fase.
+2. **Verde siempre:** tras cada cambio, typecheck/lint/build. Si rompe, se arregla o revierte.
+3. **Commits por partes, técnicamente explicativos, SIN co-autor** (nada de `Co-Authored-By`).
+4. **No instalar dependencias sin vetar** (SECURITY.md §6). Evitar libs nuevas; Tailwind + supabase-js bastan.
+5. No tocar la carpeta padre (`entregafinal`), solo `StudioSpot`.
+6. No recrear el esquema SQL (ya aplicado); si se necesita un cambio de schema, escribir un nuevo archivo de migración y DEJARLO documentado (lo aplica el humano).
+
+## Pendientes fuera de esta iteración
+- Google OAuth (requiere client id/secret de Google).
+- SMTP propio para plantillas español + volumen de correo.
+- Auto-deploy GitHub→Vercel (Vercel GitHub App).
