@@ -40,8 +40,18 @@ function safeNext(value: FormDataEntryValue | null): string {
   return next.startsWith("/") && !next.startsWith("//") ? next : "/";
 }
 
-/** Origen absoluto de la app (para construir el enlace de confirmación). */
+/**
+ * Origen absoluto de la app (para construir el enlace de confirmación de correo).
+ *
+ * Fuente canónica: la env `NEXT_PUBLIC_SITE_URL` (configurada en Vercel). Los
+ * headers `origin`/`host` son controlables por el cliente (Host header
+ * injection), así que solo se usan como fallback en desarrollo. La allow-list de
+ * redirect URLs de Supabase es la última barrera, pero no dependemos de ella.
+ */
 async function getOrigin(): Promise<string> {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (configured) return configured.replace(/\/+$/, "");
+
   const h = await headers();
   const origin = h.get("origin");
   if (origin) return origin;
