@@ -136,7 +136,7 @@ export default function RegistroForm({
 
       <SubmitButton>Crear cuenta</SubmitButton>
 
-      <p className="text-center text-xs text-stone-400">
+      <p className="text-center text-xs text-stone-500">
         Te enviaremos un correo para confirmar tu cuenta.
       </p>
     </form>

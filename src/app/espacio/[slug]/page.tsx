@@ -149,7 +149,7 @@ export default async function EspacioPage({ params }: EspacioProps) {
             >
               🗺️ Cómo llegar (Google Maps)
             </a>
-            <p className="mt-2 text-center text-xs text-stone-400">
+            <p className="mt-2 text-center text-xs text-stone-500">
               {place.lat.toFixed(4)}, {place.lng.toFixed(4)}
             </p>
           </div>

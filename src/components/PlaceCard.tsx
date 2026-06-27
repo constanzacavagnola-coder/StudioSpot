@@ -44,7 +44,7 @@ export default function PlaceCard({
         <AtributoBadges place={place} />
 
         <div className="mt-auto flex items-center justify-between gap-2 border-t border-stone-100 pt-3">
-          <span className="text-xs text-stone-400">
+          <span className="text-xs text-stone-500">
             Ahora ({FRANJA_LABEL[franjaActual]})
           </span>
           <CongestionBadge congestion={place.congestion} franja={franjaActual} />

@@ -68,7 +68,7 @@ export default async function WalletPage() {
         <p className="mt-1 text-4xl font-bold tracking-tight text-stone-900">
           {formatCLP(saldo)}
         </p>
-        <p className="mt-1 text-xs text-stone-400">Créditos de demostración (CLP).</p>
+        <p className="mt-1 text-xs text-stone-500">Créditos de demostración (CLP).</p>
       </section>
 
       {/* Recargar */}

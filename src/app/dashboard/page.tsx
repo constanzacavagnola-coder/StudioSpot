@@ -58,7 +58,7 @@ export default async function DashboardPage() {
       <section>
         <h2 className="mb-3 text-lg font-semibold text-stone-900">
           Tus espacios{" "}
-          <span className="text-sm font-normal text-stone-400">
+          <span className="text-sm font-normal text-stone-500">
             ({places.length})
           </span>
         </h2>
@@ -130,9 +130,9 @@ function OwnedPlaceCard({
       <AtributoBadges place={place} />
 
       <div className="flex items-center justify-between gap-2 border-t border-stone-100 pt-3">
-        <span className="text-xs text-stone-400">Congestión ahora</span>
+        <span className="text-xs text-stone-500">Congestión ahora</span>
         {sinCongestion ? (
-          <span className="text-xs text-stone-400">Sin datos de congestión</span>
+          <span className="text-xs text-stone-500">Sin datos de congestión</span>
         ) : (
           <CongestionBadge congestion={place.congestion} franja={franjaActual} />
         )}
