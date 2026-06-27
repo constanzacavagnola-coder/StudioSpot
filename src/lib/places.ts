@@ -104,9 +104,24 @@ export function filterPlaces(places: Place[], filtros: PlaceFilters): Place[] {
  *   mediodia 12:00–14:59
  *   tarde    15:00–18:59
  *   noche    19:00–05:59
+ *
+ * La hora se calcula SIEMPRE en la zona horaria de Chile (America/Santiago), no
+ * en la del entorno donde corre el código. Así el dashboard renderizado en el
+ * servidor (UTC en Vercel) coincide con /explorar y /mis-lugares y con la hora
+ * local del usuario chileno.
  */
+const HORA_CHILE_FMT = new Intl.DateTimeFormat("es-CL", {
+  hour: "2-digit",
+  hour12: false,
+  timeZone: "America/Santiago",
+});
+
 export function getFranjaActual(date: Date = new Date()): Franja {
-  const h = date.getHours();
+  const horaStr = HORA_CHILE_FMT.formatToParts(date).find(
+    (p) => p.type === "hour",
+  )?.value;
+  // "24" puede aparecer para medianoche en algunos entornos; normalizar a 0-23.
+  const h = Number(horaStr ?? "0") % 24;
   if (h >= 6 && h < 12) return "mañana";
   if (h >= 12 && h < 15) return "mediodia";
   if (h >= 15 && h < 19) return "tarde";
