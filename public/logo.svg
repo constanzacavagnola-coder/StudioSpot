@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" role="img" aria-label="Studio Spot">
+  <title>Studio Spot</title>
+  <!-- Marca: pin lavanda con destello -->
+  <g transform="translate(4 4)">
+    <path fill="#7a6fa6" d="M20 2.5c-7.6 0-13.75 5.9-13.75 13.25C6.25 24.75 18 35 19.25 36.1c.43.38 1.07.38 1.5 0C22 35 33.75 24.75 33.75 15.75 33.75 8.4 27.6 2.5 20 2.5Z"/>
+    <circle cx="20" cy="15.5" r="7.5" fill="#faeede"/>
+    <path fill="#7a6fa6" d="M20 9.5c.56 4.13 1.31 4.88 5.44 5.44C21.31 15.5 20.56 16.25 20 20.38c-.56-4.13-1.31-4.88-5.44-5.44C18.69 14.38 19.44 13.63 20 9.5Z"/>
+  </g>
+  <!-- Wordmark -->
+  <text x="52" y="31" font-family="'Geist','Segoe UI',system-ui,sans-serif" font-size="22" font-weight="700" fill="#262420" letter-spacing="-0.3">
+    Studio <tspan fill="#7a6fa6">Spot</tspan>
+  </text>
+</svg>

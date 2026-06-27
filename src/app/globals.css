@@ -1,20 +1,70 @@
 @import "tailwindcss";
 
-/* Paleta de marca Studio Spot — moderna, joven, cercana. */
+/* Paleta de marca Studio Spot — pastel cálida (crema + lavanda).
+   Valores fijados por el checklist de referencia; mantener el contraste AA
+   del texto (ink #262420 sobre fondos crema cumple holgado). */
 :root {
-  --background: #fafaf9; /* stone-50 */
-  --foreground: #1c1917; /* stone-900 */
-  --brand: #4f46e5; /* indigo-600 */
-  --brand-dark: #4338ca; /* indigo-700 */
-  --accent: #f59e0b; /* amber-500 */
+  /* Fondos */
+  --background: #f7f4ee; /* crema base */
+  --background-alt: #f2ede4; /* crema alterno */
+  --hero: #faeede; /* durazno muy suave para héroes */
+  --surface: #ffffff; /* tarjetas / superficies */
+
+  /* Tinta (texto) */
+  --foreground: #262420; /* principal */
+  --ink-2: #6f6a61; /* secundaria */
+  --ink-3: #9a948a; /* terciaria */
+
+  /* Bordes */
+  --border: #ece7dd;
+  --border-soft: #f1ece3;
+
+  /* Acento de marca — lavanda (reemplaza el morado anterior) */
+  --brand: #7a6fa6;
+  --brand-dark: #685d8c; /* hover / texto sobre claro */
+  --brand-soft: #e7e3f2; /* fondos suaves lavanda */
+  --accent: #7a6fa6; /* alias histórico → lavanda */
+
+  /* Apoyos */
+  --mint: #dcebe0; /* fondo menta */
+  --mint-ink: #5a8a6a; /* ícono/texto menta */
+  --peach: #f6e3d2; /* fondo durazno */
+  --peach-ink: #c98a55; /* ícono/texto durazno */
+
+  /* Congestión por franja (semántica conservada, tonos apagados) */
+  --cong-bajo: #5a8a6a; /* menta */
+  --cong-medio: #c98a55; /* durazno */
+  --cong-alto: #c2674f; /* terracota suave */
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-background-alt: var(--background-alt);
+  --color-hero: var(--hero);
+  --color-surface: var(--surface);
+
   --color-foreground: var(--foreground);
+  --color-ink: var(--foreground);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+
+  --color-border-warm: var(--border);
+  --color-border-soft: var(--border-soft);
+
   --color-brand: var(--brand);
   --color-brand-dark: var(--brand-dark);
+  --color-brand-soft: var(--brand-soft);
   --color-accent: var(--accent);
+
+  --color-mint: var(--mint);
+  --color-mint-ink: var(--mint-ink);
+  --color-peach: var(--peach);
+  --color-peach-ink: var(--peach-ink);
+
+  --color-cong-bajo: var(--cong-bajo);
+  --color-cong-medio: var(--cong-medio);
+  --color-cong-alto: var(--cong-alto);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
