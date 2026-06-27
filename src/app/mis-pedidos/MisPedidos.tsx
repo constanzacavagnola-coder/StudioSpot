@@ -2,13 +2,21 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { CartIcon, PinIcon, RelojIcon } from "@/components/icons";
 import { formatCLP } from "@/lib/constants";
 import { ORDER_ESTADO_CLASES, ORDER_ESTADO_LABEL } from "@/lib/display";
 import { suscribirsePedidosUsuario } from "@/lib/orders/realtime";
-import type { OrderConItemsYEspacio } from "@/lib/types";
+import type { OrderConItemsYEspacio, OrderEstado } from "@/lib/types";
+
+// Estados que el cliente ve como "en curso" (aún se preparan o esperan retiro);
+// el resto (retirado, cancelado) forma su historial.
+const ESTADOS_EN_CURSO: readonly OrderEstado[] = [
+  "pagado",
+  "en_preparacion",
+  "listo",
+];
 
 /**
  * Feature C (cliente): lista de "Mis pedidos" con el ESTADO EN VIVO. Client
@@ -40,6 +48,18 @@ export default function MisPedidos({
     return desuscribir;
   }, [userId, router]);
 
+  // Separa los pedidos en curso (se actualizan en vivo) del historial (retirados
+  // y cancelados). El servidor ya los entrega del más reciente al más antiguo.
+  const { enCurso, historial } = useMemo(() => {
+    const enCurso: OrderConItemsYEspacio[] = [];
+    const historial: OrderConItemsYEspacio[] = [];
+    for (const p of pedidos) {
+      if (ESTADOS_EN_CURSO.includes(p.estado)) enCurso.push(p);
+      else historial.push(p);
+    }
+    return { enCurso, historial };
+  }, [pedidos]);
+
   if (pedidos.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-border-warm bg-surface p-10 text-center">
@@ -62,24 +82,59 @@ export default function MisPedidos({
   }
 
   return (
-    <div className="space-y-4">
-      <p className="flex items-center gap-2 text-sm text-ink-2">
-        <span
-          className={`inline-block h-2 w-2 rounded-full ${
-            enVivo ? "bg-mint-ink" : "bg-ink-3"
-          }`}
-          aria-hidden
-        />
-        Estado actualizado en vivo
-      </p>
+    <div className="space-y-8">
+      <section aria-label="Pedidos en curso" className="space-y-4">
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="text-lg font-semibold text-ink">
+            En curso{" "}
+            <span className="text-sm font-normal text-ink-2">
+              ({enCurso.length})
+            </span>
+          </h2>
+          <p className="flex items-center gap-2 text-sm text-ink-2">
+            <span
+              className={`inline-block h-2 w-2 rounded-full ${
+                enVivo ? "bg-mint-ink" : "bg-ink-3"
+              }`}
+              aria-hidden
+            />
+            Estado actualizado en vivo
+          </p>
+        </div>
 
-      <ul className="space-y-4">
-        {pedidos.map((pedido) => (
-          <li key={pedido.id}>
-            <PedidoCard pedido={pedido} />
-          </li>
-        ))}
-      </ul>
+        {enCurso.length === 0 ? (
+          <p className="rounded-2xl border border-dashed border-border-warm bg-surface px-4 py-6 text-center text-sm text-ink-2">
+            No tienes pedidos en curso. Cuando hagas uno, verás aquí su estado en
+            vivo.
+          </p>
+        ) : (
+          <ul className="space-y-4">
+            {enCurso.map((pedido) => (
+              <li key={pedido.id}>
+                <PedidoCard pedido={pedido} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      {historial.length > 0 ? (
+        <section aria-label="Historial de pedidos" className="space-y-4">
+          <h2 className="text-lg font-semibold text-ink">
+            Historial{" "}
+            <span className="text-sm font-normal text-ink-2">
+              ({historial.length})
+            </span>
+          </h2>
+          <ul className="space-y-4">
+            {historial.map((pedido) => (
+              <li key={pedido.id}>
+                <PedidoCard pedido={pedido} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
     </div>
   );
 }

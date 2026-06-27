@@ -4,7 +4,14 @@ import Link from "next/link";
 import AtributoBadges from "@/components/AtributoBadges";
 import Badge from "@/components/Badge";
 import { CongestionBadge } from "@/components/Congestion";
-import { CartIcon, EmpresaIcon, Icon, LupaIcon, PinIcon } from "@/components/icons";
+import {
+  CartIcon,
+  EmpresaIcon,
+  GraficoIcon,
+  Icon,
+  LupaIcon,
+  PinIcon,
+} from "@/components/icons";
 import { requireRole } from "@/lib/auth/dal";
 import { getOwnedPlaces } from "@/lib/business/data";
 import { FRANJAS_ORDEN, TIPO_ICON, TIPO_LABEL } from "@/lib/display";
@@ -158,6 +165,12 @@ function OwnedPlaceCard({
           className="inline-flex items-center gap-1.5 rounded-lg border border-border-warm px-3 py-2 text-sm font-medium text-ink-2 transition-colors hover:border-brand/40 hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
         >
           Pedidos
+        </Link>
+        <Link
+          href={`/dashboard/${place.id}/ventas`}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-border-warm px-3 py-2 text-sm font-medium text-ink-2 transition-colors hover:border-brand/40 hover:text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+        >
+          <GraficoIcon className="h-4 w-4" /> Ventas
         </Link>
         <Link
           href={`/espacio/${place.slug}`}

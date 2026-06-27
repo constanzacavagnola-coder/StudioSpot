@@ -63,6 +63,29 @@ export const getPedidosDeEspacio = cache(
   },
 );
 
+/**
+ * Historial de ventas de un espacio: pedidos ya `retirado` (las ventas
+ * efectivas), del más reciente al más antiguo. Misma autorización que el resto
+ * (RLS `orders_select_owner` + filtro de propiedad con `getOwnedPlaceById`).
+ */
+export const getHistorialVentas = cache(
+  async (placeId: string): Promise<PedidoEmpresa[]> => {
+    const place = await getOwnedPlaceById(placeId);
+    if (!place) return [];
+
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("orders")
+      .select(ORDER_SELECT)
+      .eq("place_id", placeId)
+      .eq("estado", "retirado")
+      .order("created_at", { ascending: false });
+
+    if (error || !data) return [];
+    return data as unknown as PedidoEmpresa[];
+  },
+);
+
 /** Resumen de ventas de un espacio: total vendido (retirados) y conteo por estado. */
 export interface ResumenVentas {
   totalVendido: number; // suma de total_clp de pedidos `retirado`

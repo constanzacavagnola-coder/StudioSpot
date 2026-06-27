@@ -374,3 +374,13 @@ export function ImagenIcon(p: IconProps) {
     </SvgBase>
   );
 }
+
+// Gráfico de barras (ventas / analítica)
+export function GraficoIcon(p: IconProps) {
+  return (
+    <SvgBase {...p}>
+      <path d="M4 4v15a1 1 0 0 0 1 1h15" />
+      <path d="M8 16v-3M12.5 16V9M17 16v-6" />
+    </SvgBase>
+  );
+}
