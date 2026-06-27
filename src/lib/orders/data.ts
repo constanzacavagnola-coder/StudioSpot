@@ -3,7 +3,11 @@ import { cache } from "react";
 import { getUser } from "@/lib/auth/dal";
 import { getOwnedPlaceById } from "@/lib/business/data";
 import { createClient } from "@/lib/supabase/server";
-import type { OrderConItems, OrderEstado, PedidoEmpresa } from "@/lib/types";
+import type {
+  OrderConItemsYEspacio,
+  OrderEstado,
+  PedidoEmpresa,
+} from "@/lib/types";
 
 /**
  * Lecturas server-side de pedidos (0006). La autorización la garantiza RLS:
@@ -21,19 +25,24 @@ const ORDER_SELECT =
   "id, numero, user_id, place_id, estado, total_clp, created_at, updated_at, " +
   "items:order_items(id, order_id, menu_item_id, nombre, precio_clp, cantidad)";
 
+// Para /mis-pedidos se añade el espacio (to-one): así el cliente ve el nombre y
+// puede volver a la ficha, sin exponer solo el place_id. `places` tiene lectura
+// pública por RLS, así que el join no abre nada de más.
+const MIS_PEDIDOS_SELECT = ORDER_SELECT + ", place:places(nombre, slug)";
+
 /** Pedidos del usuario autenticado (historial completo), del más reciente al más antiguo. */
-export const getMisPedidos = cache(async (): Promise<OrderConItems[]> => {
+export const getMisPedidos = cache(async (): Promise<OrderConItemsYEspacio[]> => {
   const user = await getUser();
   if (!user) return [];
 
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("orders")
-    .select(ORDER_SELECT)
+    .select(MIS_PEDIDOS_SELECT)
     .order("created_at", { ascending: false });
 
   if (error || !data) return [];
-  return data as unknown as OrderConItems[];
+  return data as unknown as OrderConItemsYEspacio[];
 });
 
 /** Pedidos de un espacio del dueño (cola/tablero), del más reciente al más antiguo. */

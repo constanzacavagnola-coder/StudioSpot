@@ -126,3 +126,10 @@ export interface OrderConItems extends Order {
 // OrderConItems (el espacio ya está acotado por la ruta/propiedad); se nombra
 // aparte para poder añadir datos del cliente sin tocar el tipo del cliente.
 export type PedidoEmpresa = OrderConItems;
+
+// Pedido del cliente con el espacio asociado (nombre + slug), para listarlo en
+// /mis-pedidos sin que el cliente conozca solo el place_id. El join `places` es
+// to-one, así que `place` es un objeto (o null si el espacio fue borrado).
+export interface OrderConItemsYEspacio extends OrderConItems {
+  place: { nombre: string; slug: string } | null;
+}
