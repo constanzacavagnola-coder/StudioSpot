@@ -22,7 +22,7 @@ export default async function Home() {
         />
         <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-6 py-20 text-center sm:py-28">
           <span className="rounded-full border border-brand/20 bg-surface px-4 py-1 text-sm font-medium text-brand">
-            Beta · {total} espacios en Santiago
+            {total} espacios reales en Santiago
           </span>
 
           <h1 className="text-4xl font-bold tracking-tight text-ink sm:text-6xl">
