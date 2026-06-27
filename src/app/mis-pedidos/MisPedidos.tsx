@@ -36,15 +36,21 @@ export default function MisPedidos({
   userId: string;
 }) {
   const router = useRouter();
-  // Marca de "en vivo": pasa a true en cuanto entra un cambio por Realtime, solo
-  // para dar feedback visible de que la lista se mantiene al día.
+  // "En vivo" refleja la conexión REAL del canal (SUBSCRIBED), no el primer
+  // evento: así el punto verde no miente si la suscripción aún no conecta o falla.
   const [enVivo, setEnVivo] = useState(false);
+  // Mensaje para lectores de pantalla cuando un pedido cambia de estado en vivo.
+  const [aviso, setAviso] = useState("");
 
   useEffect(() => {
-    const desuscribir = suscribirsePedidosUsuario(userId, () => {
-      setEnVivo(true);
-      router.refresh();
-    });
+    const desuscribir = suscribirsePedidosUsuario(
+      userId,
+      (pedido) => {
+        setAviso(`Pedido #${pedido.numero}: ${ORDER_ESTADO_LABEL[pedido.estado]}`);
+        router.refresh();
+      },
+      (activo) => setEnVivo(activo),
+    );
     return desuscribir;
   }, [userId, router]);
 
@@ -83,6 +89,10 @@ export default function MisPedidos({
 
   return (
     <div className="space-y-8">
+      {/* Anuncio para lectores de pantalla de los cambios de estado en vivo. */}
+      <p aria-live="polite" className="sr-only">
+        {aviso}
+      </p>
       <section aria-label="Pedidos en curso" className="space-y-4">
         <div className="flex items-center justify-between gap-2">
           <h2 className="text-lg font-semibold text-ink">
@@ -98,7 +108,7 @@ export default function MisPedidos({
               }`}
               aria-hidden
             />
-            Estado actualizado en vivo
+            {enVivo ? "Estado actualizado en vivo" : "Conectando…"}
           </p>
         </div>
 
@@ -201,6 +211,13 @@ function PedidoCard({ pedido }: { pedido: OrderConItemsYEspacio }) {
           {formatCLP(pedido.total_clp)}
         </span>
       </div>
+
+      {pedido.estado === "cancelado" ? (
+        <p className="mt-2 text-xs text-ink-2">
+          El local canceló este pedido. El saldo no se reembolsa de forma
+          automática; escríbeles para coordinarlo.
+        </p>
+      ) : null}
     </article>
   );
 }

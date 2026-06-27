@@ -19,13 +19,22 @@ import type { Order } from "@/lib/types";
 export type Desuscribir = () => void;
 
 /**
+ * Estado del canal: `true` solo cuando la suscripción está realmente activa
+ * (`SUBSCRIBED`). Permite que la UI afirme "en vivo" solo si hay conexión, en vez
+ * de asumirlo. Cualquier otro estado (conectando, error, cerrado) es `false`.
+ */
+export type OnEstadoCanal = (activo: boolean) => void;
+
+/**
  * Suscribe a los cambios de estado (UPDATE) de los pedidos del usuario. Devuelve
  * la función de limpieza. El estado inicial debe venir del servidor; Realtime
- * solo entrega las actualizaciones posteriores.
+ * solo entrega las actualizaciones posteriores. `onEstado` (opcional) reporta si
+ * el canal está realmente conectado.
  */
 export function suscribirsePedidosUsuario(
   userId: string,
   onUpdate: (pedido: Order) => void,
+  onEstado?: OnEstadoCanal,
 ): Desuscribir {
   const supabase = createClient();
   const channel = supabase
@@ -42,7 +51,7 @@ export function suscribirsePedidosUsuario(
         onUpdate(payload.new);
       },
     )
-    .subscribe();
+    .subscribe((status) => onEstado?.(status === "SUBSCRIBED"));
 
   return () => {
     void supabase.removeChannel(channel);
@@ -57,6 +66,7 @@ export function suscribirsePedidosUsuario(
 export function suscribirsePedidosEspacio(
   placeId: string,
   onChange: (payload: RealtimePostgresChangesPayload<Order>) => void,
+  onEstado?: OnEstadoCanal,
 ): Desuscribir {
   const supabase = createClient();
   const channel = supabase
@@ -71,7 +81,7 @@ export function suscribirsePedidosEspacio(
       },
       onChange,
     )
-    .subscribe();
+    .subscribe((status) => onEstado?.(status === "SUBSCRIBED"));
 
   return () => {
     void supabase.removeChannel(channel);

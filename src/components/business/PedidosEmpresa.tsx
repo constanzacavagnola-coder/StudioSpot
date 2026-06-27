@@ -48,11 +48,15 @@ export default function PedidosEmpresa({
   placeId: string;
 }) {
   const router = useRouter();
+  // Refleja la conexión REAL del canal de Realtime (no se asume "en vivo").
+  const [enVivo, setEnVivo] = useState(false);
 
   useEffect(() => {
-    const desuscribir = suscribirsePedidosEspacio(placeId, () => {
-      router.refresh();
-    });
+    const desuscribir = suscribirsePedidosEspacio(
+      placeId,
+      () => router.refresh(),
+      (activo) => setEnVivo(activo),
+    );
     return desuscribir;
   }, [placeId, router]);
 
@@ -80,9 +84,15 @@ export default function PedidosEmpresa({
   return (
     <div className="space-y-8">
       <p className="flex items-center gap-2 text-sm text-ink-2">
-        <span className="inline-block h-2 w-2 rounded-full bg-mint-ink" aria-hidden />
+        <span
+          className={`inline-block h-2 w-2 rounded-full ${
+            enVivo ? "bg-mint-ink" : "bg-ink-3"
+          }`}
+          aria-hidden
+        />
         <span className="font-semibold text-ink">{activos}</span> pedido
-        {activos === 1 ? "" : "s"} en curso · se actualiza en vivo
+        {activos === 1 ? "" : "s"} en curso ·{" "}
+        {enVivo ? "se actualiza en vivo" : "conectando…"}
       </p>
 
       <div className="grid gap-5 lg:grid-cols-3">
