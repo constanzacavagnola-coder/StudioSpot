@@ -1,7 +1,15 @@
 // Etiquetas y estilos de presentación compartidos entre componentes.
 // Centralizado para mantener coherencia visual y de copy en español.
 
-import type { Franja, Nivel3, NivelPrecio, NivelRuido, PlaceType } from "@/lib/types";
+import type {
+  Franja,
+  Nivel3,
+  NivelPrecio,
+  NivelRuido,
+  PlaceType,
+  TxTipo,
+  UserRole,
+} from "@/lib/types";
 
 export const TIPO_LABEL: Record<PlaceType, string> = {
   cafe: "Café",
@@ -68,4 +76,18 @@ export const CONGESTION_LABEL: Record<Nivel3, string> = {
   bajo: "Tranquilo",
   medio: "Moderado",
   alto: "Lleno",
+};
+
+// ===== Cuentas =====
+
+export const ROL_LABEL: Record<UserRole, string> = {
+  usuario: "Usuario",
+  empresa: "Empresa",
+};
+
+// Etiquetas de los movimientos de la wallet de demostración.
+export const TX_TIPO_LABEL: Record<TxTipo, string> = {
+  recarga: "Recarga",
+  descuento: "Descuento",
+  ajuste: "Ajuste",
 };
