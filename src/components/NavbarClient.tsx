@@ -28,6 +28,7 @@ function accesosPorRol(rol: UserRole) {
   }
   return [
     { href: "/mis-lugares", label: "Mis lugares" },
+    { href: "/mis-pedidos", label: "Mis pedidos" },
     { href: "/wallet", label: "Wallet" },
   ];
 }

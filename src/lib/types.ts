@@ -69,3 +69,60 @@ export interface Favorite {
   place_id: string;
   created_at: string;
 }
+
+// ===== Menú + Pedidos (migración 0006_menu_pedidos.sql) =====
+// Mantener en sync con 0006: tipos `integer` del esquema → `number`; `numero`
+// es `bigint` pero la secuencia parte en 1000, así que cabe sobrado en `number`.
+
+export interface MenuItem {
+  id: string;
+  place_id: string;
+  nombre: string;
+  descripcion: string | null;
+  precio_clp: number;
+  stock: number;
+  imagen_url: string | null;
+  activo: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// Estados del pedido (enum order_estado). El flujo del dueño avanza en este orden;
+// `cancelado` es terminal alternativo. Ver ORDER_ESTADO_SIGUIENTE en display.ts.
+export type OrderEstado =
+  | "pagado"
+  | "en_preparacion"
+  | "listo"
+  | "retirado"
+  | "cancelado";
+
+export interface Order {
+  id: string;
+  numero: number; // bigint en BD; visible para el cliente como "Pedido #numero".
+  user_id: string;
+  place_id: string;
+  estado: OrderEstado;
+  total_clp: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface OrderItem {
+  id: string;
+  order_id: string;
+  menu_item_id: string | null; // ON DELETE SET NULL: el ítem pudo borrarse luego.
+  nombre: string; // snapshot al momento de la compra
+  precio_clp: number; // snapshot
+  cantidad: number;
+}
+
+// Pedido con sus líneas, tal como lo leen las páginas de cliente y de empresa
+// (join de orders + order_items).
+export interface OrderConItems extends Order {
+  items: OrderItem[];
+}
+
+// Vista de la empresa para un pedido de su espacio. Hoy coincide con
+// OrderConItems (el espacio ya está acotado por la ruta/propiedad); se nombra
+// aparte para poder añadir datos del cliente sin tocar el tipo del cliente.
+export type PedidoEmpresa = OrderConItems;

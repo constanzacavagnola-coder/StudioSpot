@@ -237,6 +237,16 @@ export function DestelloIcon(p: IconProps) {
   );
 }
 
+// Bolsa de compra (carrito / pedido)
+export function CartIcon(p: IconProps) {
+  return (
+    <SvgBase {...p}>
+      <path d="M6 8h12l-1 11.5a2 2 0 0 1-2 1.5H9a2 2 0 0 1-2-1.5L6 8Z" />
+      <path d="M9 8V6.5a3 3 0 0 1 6 0V8" />
+    </SvgBase>
+  );
+}
+
 /* ---- Genéricos / UI ---- */
 
 // Lupa (buscar / reclamar)

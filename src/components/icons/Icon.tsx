@@ -13,6 +13,7 @@ import {
   AntenaIcon,
   BibliotecaIcon,
   CafeIcon,
+  CartIcon,
   CheckCircleIcon,
   CheckIcon,
   ChevronDownIcon,
@@ -53,6 +54,7 @@ export type IconName =
   | "mochila"
   | "wallet"
   | "silla"
+  | "bolsa"
   | "destello"
   | "lupa"
   | "alerta"
@@ -80,6 +82,7 @@ const REGISTRY: Record<IconName, (p: IconProps) => React.ReactElement> = {
   mochila: MochilaIcon,
   wallet: WalletIcon,
   silla: SillaIcon,
+  bolsa: CartIcon,
   destello: DestelloIcon,
   lupa: LupaIcon,
   alerta: AlertaIcon,

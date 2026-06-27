@@ -7,6 +7,7 @@ import type {
   Nivel3,
   NivelPrecio,
   NivelRuido,
+  OrderEstado,
   PlaceType,
   TxTipo,
   UserRole,
@@ -95,3 +96,43 @@ export const TX_TIPO_LABEL: Record<TxTipo, string> = {
   descuento: "Descuento",
   ajuste: "Ajuste",
 };
+
+// ===== Pedidos =====
+
+// Etiqueta legible de cada estado del pedido (enum order_estado).
+export const ORDER_ESTADO_LABEL: Record<OrderEstado, string> = {
+  pagado: "Pagado",
+  en_preparacion: "En preparación",
+  listo: "Listo",
+  retirado: "Retirado",
+  cancelado: "Cancelado",
+};
+
+// Clases Tailwind del badge de estado, en tonos pastel de la paleta (mismo
+// patrón `bg/15 text ring/25` que CONGESTION_CLASES): pagado→lavanda (marca),
+// en_preparación→durazno, listo→menta, retirado→tinta secundaria, cancelado→rosa.
+export const ORDER_ESTADO_CLASES: Record<OrderEstado, string> = {
+  pagado: "bg-brand/15 text-brand ring-brand/25",
+  en_preparacion: "bg-peach-ink/15 text-peach-ink ring-peach-ink/25",
+  listo: "bg-mint-ink/15 text-mint-ink ring-mint-ink/25",
+  retirado: "bg-ink-2/15 text-ink-2 ring-ink-2/25",
+  cancelado: "bg-rose-500/15 text-rose-600 ring-rose-500/25",
+};
+
+// Transición de estado PERMITIDA hacia adelante (lista cerrada). El dueño solo
+// puede avanzar al estado que aquí se indica; `null` = estado terminal. La
+// cancelación es una transición aparte (ver cancelarPedido / ESTADOS_CANCELABLES).
+export const ORDER_ESTADO_SIGUIENTE: Record<OrderEstado, OrderEstado | null> = {
+  pagado: "en_preparacion",
+  en_preparacion: "listo",
+  listo: "retirado",
+  retirado: null,
+  cancelado: null,
+};
+
+// Estados desde los que el dueño aún puede cancelar el pedido (antes de retirar).
+export const ESTADOS_CANCELABLES: readonly OrderEstado[] = [
+  "pagado",
+  "en_preparacion",
+  "listo",
+];
