@@ -10,9 +10,12 @@ import type {
 } from "@/lib/types";
 
 /**
- * Lecturas server-side de pedidos (0006). La autorización la garantiza RLS:
- *  - Cliente: `orders_select_client` solo devuelve sus pedidos (user_id =
- *    auth.uid()); no hace falta filtrar por user_id en la query.
+ * Lecturas server-side de pedidos (0006). La autorización la garantiza RLS, pero
+ * NO se delega el alcance en ella:
+ *  - Cliente (`getMisPedidos`): se filtra explícito por `user_id`. Las policies de
+ *    `orders` se combinan con OR (`orders_select_client` OR `orders_select_owner`),
+ *    así que una cuenta `empresa` dueña de espacios vería también los pedidos de
+ *    SUS clientes; el filtro evita mezclarlos como "míos".
  *  - Empresa: `orders_select_owner` deja ver los pedidos de su espacio; igual se
  *    verifica la propiedad con `getOwnedPlaceById` (defensa en profundidad y para
  *    devolver [] limpio si el id no es del dueño).
@@ -39,6 +42,7 @@ export const getMisPedidos = cache(async (): Promise<OrderConItemsYEspacio[]> =>
   const { data, error } = await supabase
     .from("orders")
     .select(MIS_PEDIDOS_SELECT)
+    .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
   if (error || !data) return [];

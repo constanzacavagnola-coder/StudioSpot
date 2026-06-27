@@ -45,11 +45,18 @@ async function escribirEstado(
   nuevo: OrderEstado,
 ): Promise<EstadoResult> {
   const supabase = await createClient();
-  const { error } = await supabase
+  // Se acota por `place_id` además del `id` (defensa en profundidad, simétrico con
+  // menu/actions) y se confirma la fila afectada con `.select()` para no reportar
+  // éxito si la RLS la bloqueara en silencio (0 filas, sin error).
+  const { data, error } = await supabase
     .from("orders")
     .update({ estado: nuevo })
-    .eq("id", orderId);
+    .eq("id", orderId)
+    .eq("place_id", placeId)
+    .select("id")
+    .maybeSingle();
   if (error) return { ok: false, error: "No pudimos actualizar el pedido." };
+  if (!data) return { ok: false, error: "No encontramos el pedido." };
 
   revalidatePath(`/dashboard/${placeId}/pedidos`);
   revalidatePath(`/dashboard/${placeId}/ventas`);
