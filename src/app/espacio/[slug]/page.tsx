@@ -4,6 +4,9 @@ import { notFound } from "next/navigation";
 import AtributoBadges from "@/components/AtributoBadges";
 import Badge from "@/components/Badge";
 import { CongestionDia } from "@/components/Congestion";
+import FavoriteButton from "@/components/FavoriteButton";
+import { getUser } from "@/lib/auth/dal";
+import { isFavorite } from "@/lib/favorites/data";
 import {
   NIVEL3_LABEL,
   PRECIO_LABEL,
@@ -41,6 +44,10 @@ export default async function EspacioPage({ params }: EspacioProps) {
 
   if (!place) notFound();
 
+  // Sesión y estado del favorito para el botón "guardar" (F2).
+  const user = await getUser();
+  const favorited = user ? await isFavorite(place.id) : false;
+
   const googleMaps = `https://www.google.com/maps/search/?api=1&query=${place.lat},${place.lng}`;
 
   return (
@@ -54,11 +61,20 @@ export default async function EspacioPage({ params }: EspacioProps) {
 
       {/* Encabezado */}
       <header className="mt-4 flex flex-col gap-3 border-b border-stone-200 pb-6">
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge className="bg-brand/10 text-brand ring-brand/20">
-            <span aria-hidden>{TIPO_EMOJI[place.tipo]}</span> {TIPO_LABEL[place.tipo]}
-          </Badge>
-          <span className="text-sm text-stone-500">📍 {place.comuna}</span>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge className="bg-brand/10 text-brand ring-brand/20">
+              <span aria-hidden>{TIPO_EMOJI[place.tipo]}</span> {TIPO_LABEL[place.tipo]}
+            </Badge>
+            <span className="text-sm text-stone-500">📍 {place.comuna}</span>
+          </div>
+          <FavoriteButton
+            placeId={place.id}
+            placeName={place.nombre}
+            initialFavorite={favorited}
+            isAuthenticated={!!user}
+            variant="detail"
+          />
         </div>
         <h1 className="text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">
           {place.nombre}

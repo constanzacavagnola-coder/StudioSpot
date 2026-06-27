@@ -1,17 +1,17 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { useMemo, useState } from "react";
 import PlaceCard from "@/components/PlaceCard";
+import { useFranjaActual } from "@/hooks/useFranjaActual";
 import {
   NIVEL3_LABEL,
   PRECIO_LABEL,
   RUIDO_LABEL,
   TIPO_LABEL,
 } from "@/lib/display";
-import { filterPlaces, getFranjaActual, type PlaceFilters } from "@/lib/places";
+import { filterPlaces, type PlaceFilters } from "@/lib/places";
 import type {
-  Franja,
   Nivel3,
   NivelPrecio,
   NivelRuido,
@@ -44,29 +44,25 @@ const NIVELES3: Nivel3[] = ["bajo", "medio", "alto"];
 const RUIDOS: NivelRuido[] = ["silencioso", "moderado", "animado"];
 const PRECIOS: NivelPrecio[] = ["gratis", "$", "$$", "$$$"];
 
-// Lee la franja horaria del cliente sin provocar desajustes de hidratación:
-// en el servidor devuelve un valor constante y en el cliente la hora real.
-const noopSubscribe = () => () => {};
-function useFranjaActual(): Franja {
-  return useSyncExternalStore(
-    noopSubscribe,
-    () => getFranjaActual(),
-    () => "mañana" as Franja,
-  );
-}
-
 export default function ExplorarClient({
   places,
   comunas,
   tipos,
+  favoriteIds = [],
+  isAuthenticated = false,
 }: {
   places: Place[];
   comunas: string[];
   tipos: PlaceType[];
+  /** IDs de los espacios ya guardados por el usuario (resueltos en el servidor). */
+  favoriteIds?: string[];
+  isAuthenticated?: boolean;
 }) {
   const [filtros, setFiltros] = useState<Required<PlaceFilters>>(FILTROS_INICIALES);
 
   const franjaActual = useFranjaActual();
+
+  const favoriteSet = useMemo(() => new Set(favoriteIds), [favoriteIds]);
 
   const filtradas = useMemo(
     () => filterPlaces(places, filtros),
@@ -170,7 +166,13 @@ export default function ExplorarClient({
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filtradas.map((place) => (
-              <PlaceCard key={place.id} place={place} franjaActual={franjaActual} />
+              <PlaceCard
+                key={place.id}
+                place={place}
+                franjaActual={franjaActual}
+                isFavorite={favoriteSet.has(place.id)}
+                isAuthenticated={isAuthenticated}
+              />
             ))}
           </div>
         )}

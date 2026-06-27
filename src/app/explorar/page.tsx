@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { getUser } from "@/lib/auth/dal";
+import { getFavoriteIds } from "@/lib/favorites/data";
 import { getAllPlaces } from "@/lib/places";
 import ExplorarClient from "./ExplorarClient";
 
@@ -10,8 +12,13 @@ export const metadata: Metadata = {
 
 export default async function ExplorarPage() {
   // Datos cargados en el servidor (Supabase o JSON) y entregados al cliente,
-  // donde se aplican los filtros y se renderiza el mapa.
-  const places = await getAllPlaces();
+  // donde se aplican los filtros y se renderiza el mapa. La sesión y los
+  // favoritos se resuelven aquí (cookies) para pintar los corazones sin parpadeo.
+  const [places, user, favoriteIds] = await Promise.all([
+    getAllPlaces(),
+    getUser(),
+    getFavoriteIds(),
+  ]);
   const comunas = [...new Set(places.map((p) => p.comuna))].sort((a, b) =>
     a.localeCompare(b, "es"),
   );
@@ -28,7 +35,13 @@ export default async function ExplorarPage() {
         </p>
       </header>
 
-      <ExplorarClient places={places} comunas={comunas} tipos={tipos} />
+      <ExplorarClient
+        places={places}
+        comunas={comunas}
+        tipos={tipos}
+        favoriteIds={[...favoriteIds]}
+        isAuthenticated={!!user}
+      />
     </div>
   );
 }
