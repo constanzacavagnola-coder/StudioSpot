@@ -14,6 +14,8 @@ import {
 } from "@/components/icons";
 import { getUser } from "@/lib/auth/dal";
 import { isFavorite } from "@/lib/favorites/data";
+import { getMenuPublico } from "@/lib/menu/data";
+import MenuCompra from "./MenuCompra";
 import {
   NIVEL3_LABEL,
   PRECIO_LABEL,
@@ -60,6 +62,9 @@ export default async function EspacioPage({ params }: EspacioProps) {
   const [favorited, saldo] = user
     ? await Promise.all([isFavorite(place.id), getWalletSaldo()])
     : [false, 0];
+
+  // Catálogo público (ítems activos) para la sección Menú / compra (Feature B).
+  const menu = await getMenuPublico(place.id);
 
   const googleMaps = `https://www.google.com/maps/search/?api=1&query=${place.lat},${place.lng}`;
 
@@ -117,6 +122,18 @@ export default async function EspacioPage({ params }: EspacioProps) {
               {place.ambiente && <Dato titulo="Ambiente" valor={place.ambiente} />}
             </dl>
           </section>
+
+          {/* Menú + compra (solo si el espacio cargó productos activos). */}
+          {menu.length > 0 && (
+            <MenuCompra
+              placeId={place.id}
+              slug={place.slug}
+              nombreEspacio={place.nombre}
+              items={menu}
+              isAuthenticated={!!user}
+              saldo={saldo}
+            />
+          )}
 
           {/* Congestión */}
           <section>
