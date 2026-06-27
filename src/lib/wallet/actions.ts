@@ -3,13 +3,13 @@
 import { revalidatePath } from "next/cache";
 
 import { getUser } from "@/lib/auth/dal";
-import { MONTOS_RECARGA_CLP } from "@/lib/constants";
+import { MONTOS_DESCUENTO_CLP, MONTOS_RECARGA_CLP } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/server";
 
 /**
- * Server Action de la wallet de DEMO (F3): simula una recarga de créditos
- * ficticios (NO hay dinero real ni pasarela de pago). Se ejecuta SIEMPRE en el
- * servidor y re-verifica la sesión con el DAL; el cliente nunca es fuente de
+ * Server Action de la wallet (F3): recarga el saldo interno de Studio Spot en CLP
+ * (créditos propios de la app, SIN pasarela de pago externa). Se ejecuta SIEMPRE
+ * en el servidor y re-verifica la sesión con el DAL; el cliente nunca es fuente de
  * verdad. RLS (`wallet_*_own`, `wallettx_*_own`) es la última barrera: solo se
  * pueden tocar filas con `user_id = auth.uid()`.
  *
@@ -50,6 +50,61 @@ export async function recargar(monto: number): Promise<RecargaResult> {
   }
 
   // La página /wallet se renderiza desde estos datos; refrescar su caché.
+  revalidatePath("/wallet");
+  return { ok: true, saldo: (data as number | null) ?? 0 };
+}
+
+/**
+ * Server Action para GASTAR saldo como descuento al consumir en un espacio. Crea
+ * un movimiento tipo `descuento` y resta del saldo de forma ATÓMICA vía la función
+ * SQL `usar_saldo()` (SECURITY DEFINER, migración 0005): el descuento solo aplica
+ * si el saldo alcanza (`saldo_clp >= monto` en el propio UPDATE), evitando saldos
+ * negativos y carreras. El cliente no puede escribir wallet/wallet_tx directamente
+ * (esos grants se revocaron en 0004); todo pasa por la función.
+ *
+ * El monto se valida contra la lista cerrada `MONTOS_DESCUENTO_CLP` y la glosa se
+ * recorta a un texto corto (no se confía en el input del cliente).
+ */
+export type UsarSaldoResult =
+  | { ok: true; saldo: number }
+  | { ok: false; error: string };
+
+export async function usarSaldo(
+  monto: number,
+  glosa?: string,
+): Promise<UsarSaldoResult> {
+  if (!MONTOS_DESCUENTO_CLP.includes(monto as (typeof MONTOS_DESCUENTO_CLP)[number])) {
+    return { ok: false, error: "Monto de descuento no válido." };
+  }
+
+  const user = await getUser();
+  if (!user) {
+    return { ok: false, error: "Debes iniciar sesión para usar tu saldo." };
+  }
+
+  // Glosa controlada: texto corto y sin espacios sobrantes. Null si no viene.
+  const glosaLimpia =
+    typeof glosa === "string" && glosa.trim().length > 0
+      ? glosa.trim().slice(0, 120)
+      : null;
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("usar_saldo", {
+    p_monto: monto,
+    p_glosa: glosaLimpia,
+  });
+  if (error) {
+    // La función lanza 'Saldo insuficiente' cuando el saldo no alcanza; el resto
+    // se trata como error genérico para no filtrar detalles internos.
+    const insuficiente = error.message?.includes("Saldo insuficiente");
+    return {
+      ok: false,
+      error: insuficiente
+        ? "No tienes saldo suficiente para este descuento."
+        : "No pudimos usar tu saldo. Inténtalo de nuevo.",
+    };
+  }
+
   revalidatePath("/wallet");
   return { ok: true, saldo: (data as number | null) ?? 0 };
 }

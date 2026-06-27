@@ -7,11 +7,12 @@ import { TX_TIPO_LABEL } from "@/lib/display";
 import type { WalletTx } from "@/lib/types";
 import { getWalletSaldo, getWalletTransactions } from "@/lib/wallet/data";
 import WalletRecarga from "./WalletRecarga";
+import WalletUsarSaldo from "./WalletUsarSaldo";
 
 export const metadata: Metadata = {
   title: "Wallet · Studio Spot",
   description:
-    "Tu saldo de demostración en Studio Spot: recarga créditos ficticios y revisa el historial de movimientos.",
+    "Tu saldo en Studio Spot: recarga créditos, úsalos como descuento al consumir en los espacios y revisa el historial de movimientos.",
 };
 
 // Formatea la fecha/hora de un movimiento en español de Chile.
@@ -24,12 +25,13 @@ const FECHA_FMT = new Intl.DateTimeFormat("es-CL", {
 });
 
 /**
- * Página /wallet (F3): saldo de DEMO, recarga de créditos ficticios e historial
- * de movimientos. Ruta privada — sin sesión, `requireUser()` redirige a /login.
- * Los datos llegan ya filtrados por RLS al usuario autenticado.
+ * Página /wallet (F3): saldo, recarga, uso de saldo como descuento e historial de
+ * movimientos. Ruta privada — sin sesión, `requireUser()` redirige a /login. Los
+ * datos llegan ya filtrados por RLS al usuario autenticado.
  *
- * IMPORTANTE: el saldo es de demostración (créditos ficticios), NO dinero real.
- * El banner lo deja explícito (decisión de producto del PLAN).
+ * El saldo son créditos internos de Studio Spot en CLP (sin pasarela de pago
+ * externa): se recarga, se gasta como descuento al consumir en los espacios y
+ * cada movimiento queda en el historial.
  */
 export default async function WalletPage() {
   await requireUser();
@@ -43,21 +45,22 @@ export default async function WalletPage() {
       <header className="mb-6">
         <h1 className="text-3xl font-bold tracking-tight text-ink">Wallet</h1>
         <p className="mt-1 text-ink-2">
-          Recarga créditos y revisa tus movimientos.
+          Recarga saldo, úsalo como descuento al consumir en los espacios y revisa
+          tus movimientos.
         </p>
       </header>
 
-      {/* Banner: saldo de demostración, sin dinero real */}
+      {/* Cómo funciona el saldo: créditos internos, sin pasarela externa */}
       <div
         role="note"
-        className="mb-6 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900"
+        className="mb-6 flex items-start gap-3 rounded-2xl border border-brand/20 bg-brand-soft/50 p-4 text-sm text-ink-2"
       >
-        <AlertaIcon className="mt-0.5 h-5 w-5 shrink-0 text-amber-700" />
+        <AlertaIcon className="mt-0.5 h-5 w-5 shrink-0 text-brand" />
         <p>
-          <span className="font-semibold">Saldo de demostración.</span> Estos son
-          créditos ficticios para probar la experiencia:{" "}
-          <span className="font-semibold">no representan dinero real</span> ni se
-          cobra ningún pago.
+          <span className="font-semibold text-ink">Tu saldo Studio Spot.</span>{" "}
+          Créditos de la app en pesos (CLP) que cargas y luego usas como descuento
+          al consumir en los espacios. Lo gestiona la propia app, sin pasarela de
+          pago externa.
         </p>
       </div>
 
@@ -67,7 +70,7 @@ export default async function WalletPage() {
         <p className="mt-1 text-4xl font-bold tracking-tight text-ink">
           {formatCLP(saldo)}
         </p>
-        <p className="mt-1 text-xs text-ink-2">Créditos de demostración (CLP).</p>
+        <p className="mt-1 text-xs text-ink-2">Créditos Studio Spot (CLP).</p>
       </section>
 
       {/* Recargar */}
@@ -76,6 +79,15 @@ export default async function WalletPage() {
           Recargar saldo
         </h2>
         <WalletRecarga />
+      </section>
+
+      {/* Usar saldo como descuento */}
+      <section className="mt-6">
+        <h2 className="mb-1 text-lg font-semibold text-ink">Usar saldo</h2>
+        <p className="mb-3 text-sm text-ink-2">
+          Aplica un descuento con tu saldo al consumir en un espacio.
+        </p>
+        <WalletUsarSaldo saldo={saldo} glosa="Descuento con saldo Studio Spot" />
       </section>
 
       {/* Historial de movimientos */}
@@ -88,8 +100,7 @@ export default async function WalletPage() {
               Aún no tienes movimientos
             </h3>
             <p className="mx-auto mt-1 max-w-sm text-sm text-ink-2">
-              Haz tu primera recarga arriba para empezar a usar tu saldo de
-              demostración.
+              Haz tu primera recarga arriba para empezar a usar tu saldo.
             </p>
           </div>
         ) : (

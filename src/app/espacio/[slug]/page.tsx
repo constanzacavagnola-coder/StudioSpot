@@ -22,6 +22,9 @@ import {
   TIPO_LABEL,
 } from "@/lib/display";
 import { getAllPlaces, getPlaceBySlug } from "@/lib/places";
+import { formatCLP } from "@/lib/constants";
+import { getWalletSaldo } from "@/lib/wallet/data";
+import WalletUsarSaldo from "@/app/wallet/WalletUsarSaldo";
 
 // Prerendera una página estática por cada espacio del dataset.
 export async function generateStaticParams() {
@@ -51,9 +54,12 @@ export default async function EspacioPage({ params }: EspacioProps) {
 
   if (!place) notFound();
 
-  // Sesión y estado del favorito para el botón "guardar" (F2).
+  // Sesión y estado del favorito para el botón "guardar" (F2). Si hay sesión,
+  // también el saldo de la wallet para ofrecer "usar saldo" como descuento aquí.
   const user = await getUser();
-  const favorited = user ? await isFavorite(place.id) : false;
+  const [favorited, saldo] = user
+    ? await Promise.all([isFavorite(place.id), getWalletSaldo()])
+    : [false, 0];
 
   const googleMaps = `https://www.google.com/maps/search/?api=1&query=${place.lat},${place.lng}`;
 
@@ -163,6 +169,33 @@ export default async function EspacioPage({ params }: EspacioProps) {
               {place.lat.toFixed(4)}, {place.lng.toFixed(4)}
             </p>
           </div>
+
+          {/* Usar saldo como descuento al consumir aquí (solo con sesión). */}
+          {user && (
+            <div className="rounded-2xl border border-border-warm bg-surface p-5 shadow-sm">
+              <h3 className="font-semibold text-ink">Usar saldo aquí</h3>
+              <p className="mt-1 text-sm text-ink-2">
+                Aplica un descuento con tu saldo Studio Spot al consumir en este
+                espacio.
+              </p>
+              <p className="mt-2 text-xs text-ink-2">
+                Saldo disponible:{" "}
+                <span className="font-semibold text-ink">{formatCLP(saldo)}</span>
+              </p>
+              <div className="mt-3">
+                <WalletUsarSaldo
+                  saldo={saldo}
+                  glosa={`Descuento en ${place.nombre}`}
+                />
+              </div>
+              <Link
+                href="/wallet"
+                className="mt-3 inline-block text-xs font-medium text-brand hover:text-brand-dark"
+              >
+                Ir a mi wallet
+              </Link>
+            </div>
+          )}
 
           {place.fuente && (
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
