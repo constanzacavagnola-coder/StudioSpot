@@ -6,7 +6,7 @@ import { MONTOS_RECARGA_CLP, formatCLP } from "@/lib/constants";
 import { recargar } from "@/lib/wallet/actions";
 
 /**
- * Botones de recarga de la wallet de DEMO (F3). Client Component porque maneja
+ * Botones de recarga del saldo de la wallet (F3). Client Component porque maneja
  * interacción y estado de carga. Cada botón dispara la Server Action `recargar`
  * con un monto fijo; al terminar, la Action revalida /wallet y el saldo +
  * historial (renderizados en el servidor) se refrescan solos.
@@ -27,7 +27,7 @@ export default function WalletRecarga() {
     startTransition(async () => {
       const res = await recargar(monto);
       if (res.ok) {
-        setExito(`Recargaste ${formatCLP(monto)} de saldo de demostración.`);
+        setExito(`Recargaste ${formatCLP(monto)} de saldo.`);
       } else {
         setError(res.error);
       }
@@ -46,7 +46,7 @@ export default function WalletRecarga() {
               type="button"
               onClick={() => onRecargar(monto)}
               disabled={pending}
-              aria-label={`Recargar ${formatCLP(monto)} de saldo de demostración`}
+              aria-label={`Recargar ${formatCLP(monto)} de saldo`}
               className="inline-flex items-center justify-center rounded-xl border border-brand/30 bg-surface px-4 py-3 text-sm font-semibold text-brand transition-colors hover:border-brand hover:bg-brand/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {cargando ? "Recargando…" : `+ ${formatCLP(monto)}`}

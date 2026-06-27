@@ -18,7 +18,7 @@ export default function Footer() {
         </nav>
       </div>
       <p className="pb-6 text-center text-xs text-ink-3">
-        Datos aportados por la comunidad. MVP con fines demostrativos.
+        Datos aportados y validados por la comunidad de Studio Spot.
       </p>
     </footer>
   );

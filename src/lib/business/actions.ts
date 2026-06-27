@@ -235,8 +235,9 @@ export async function updatePlace(
 }
 
 /**
- * Reclama un espacio sin dueño vía la función `claim_place()` (auto-aprobado en
- * el demo). Devuelve un resultado para que la UI muestre feedback sin recargar.
+ * Reclama un espacio sin dueño vía la función `claim_place()` (auto-aprobado: el
+ * espacio queda asociado de inmediato). Devuelve un resultado para que la UI
+ * muestre feedback sin recargar.
  */
 export async function claimPlace(placeId: string): Promise<ClaimResult> {
   if (typeof placeId !== "string" || placeId.length === 0) {

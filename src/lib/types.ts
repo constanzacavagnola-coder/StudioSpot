@@ -45,7 +45,8 @@ export interface Profile {
   rol: UserRole;
 }
 
-// Tipo de movimiento de la wallet de DEMO (créditos ficticios, no dinero real).
+// Tipo de movimiento de la wallet: recarga (suma saldo), descuento (gasta saldo
+// al consumir en un espacio) o ajuste. Saldo interno de Studio Spot en CLP.
 export type TxTipo = "recarga" | "descuento" | "ajuste";
 
 export interface WalletTx {

@@ -89,7 +89,7 @@ export const ROL_LABEL: Record<UserRole, string> = {
   empresa: "Empresa",
 };
 
-// Etiquetas de los movimientos de la wallet de demostración.
+// Etiquetas de los movimientos de la wallet.
 export const TX_TIPO_LABEL: Record<TxTipo, string> = {
   recarga: "Recarga",
   descuento: "Descuento",

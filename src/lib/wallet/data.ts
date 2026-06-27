@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { WalletTx } from "@/lib/types";
 
 /**
- * Lecturas server-side de la wallet de DEMO (F3). La autorización la garantiza
+ * Lecturas server-side de la wallet (F3). La autorización la garantiza
  * RLS: las políticas `wallet_select_own` / `wallettx_select_own` solo devuelven
  * las filas del usuario autenticado, así que no hace falta filtrar por
  * `user_id` en la query.
@@ -15,7 +15,7 @@ import type { WalletTx } from "@/lib/types";
  */
 
 /**
- * Saldo actual de la wallet en CLP (créditos ficticios). Si el usuario aún no
+ * Saldo actual de la wallet en CLP (créditos internos de Studio Spot). Si el usuario aún no
  * tiene fila en `wallet` (no ha recargado nunca), el saldo es 0. Por eso se usa
  * `.maybeSingle()` y no `.single()` (que lanzaría sin fila).
  */
