@@ -1,0 +1,35 @@
+# pnpm-workspace.yaml — endurecimiento de cadena de suministro (Studio Spot)
+# Ver SECURITY.md (normativo). pnpm 11.x.
+
+# 1) Cuarentena de versiones recién publicadas (en MINUTOS).
+#    1440 = 1 día (default pnpm 11). Aquí 7 días para mitigar "smash-and-grab" (Shai-Hulud).
+minimumReleaseAge: 10080 # 7 días
+
+# 1b) Excepciones puntuales por nombre de paquete. Mantener vacío y justificar cada entrada.
+minimumReleaseAgeExclude: []
+
+# 2) Aprobación explícita de scripts de build de dependencias.
+#    Los scripts de install de dependencias están BLOQUEADOS por defecto.
+#    'allowBuilds' es un mapa nombre -> booleano. true = permitido, false = denegado.
+#    DECISIÓN (ver SECURITY.md §1.6 / §2.2): se DENIEGAN ambos hasta revisión explícita.
+#      - sharp: build nativo para optimización de imágenes (next/image). No es necesario
+#        para compilar; en producción la optimización de imágenes puede requerir aprobarlo
+#        tras revisar el paquete. Por ahora denegado.
+#      - unrs-resolver: binario nativo usado por la resolución de imports de ESLint. Trae
+#        prebuilds por plataforma (optionalDependencies), por lo que funciona sin ejecutar
+#        su script de install. Denegado.
+allowBuilds:
+  sharp: false
+  unrs-resolver: false
+
+# 3) NO permitir todos los builds (default false; explícito).
+dangerouslyAllowAllBuilds: false
+
+# 4) Bloquear subdependencias exóticas (default true en pnpm 11; explícito).
+blockExoticSubdeps: true
+
+# 5) Verificar integridad del store antes de enlazar (default true; explícito).
+verifyStoreIntegrity: true
+
+# 6) Fallar ante peer dependencies faltantes/inválidas.
+strictPeerDependencies: true
