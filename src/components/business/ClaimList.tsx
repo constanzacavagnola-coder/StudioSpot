@@ -2,8 +2,9 @@
 
 import { useMemo, useState, useTransition } from "react";
 
+import { CheckCircleIcon, Icon, PinIcon } from "@/components/icons";
 import { claimPlace } from "@/lib/business/actions";
-import { TIPO_EMOJI, TIPO_LABEL } from "@/lib/display";
+import { TIPO_ICON, TIPO_LABEL } from "@/lib/display";
 import type { Place } from "@/lib/types";
 
 /**
@@ -50,14 +51,12 @@ export default function ClaimList({ places }: { places: Place[] }) {
     return (
       <div>
         {exito ? <ExitoAviso mensaje={exito} /> : null}
-        <div className="rounded-2xl border border-dashed border-stone-300 bg-white p-10 text-center">
-          <p className="text-4xl" aria-hidden>
-            ✅
-          </p>
-          <h2 className="mt-3 text-lg font-semibold text-stone-900">
+        <div className="rounded-2xl border border-dashed border-border-warm bg-surface p-10 text-center">
+          <CheckCircleIcon className="mx-auto h-12 w-12 text-mint-ink" />
+          <h2 className="mt-3 text-lg font-semibold text-ink">
             No quedan espacios por reclamar
           </h2>
-          <p className="mx-auto mt-1 max-w-md text-sm text-stone-500">
+          <p className="mx-auto mt-1 max-w-md text-sm text-ink-2">
             Todos los espacios del catálogo ya tienen dueño. Puedes crear uno
             nuevo desde tu dashboard.
           </p>
@@ -78,7 +77,7 @@ export default function ClaimList({ places }: { places: Place[] }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Buscar por nombre o comuna…"
-          className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 shadow-sm placeholder:text-stone-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+          className="w-full rounded-lg border border-border-warm bg-surface px-3 py-2 text-sm text-ink shadow-sm placeholder:text-ink-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
         />
       </div>
 
@@ -95,13 +94,13 @@ export default function ClaimList({ places }: { places: Place[] }) {
         ) : null}
       </div>
 
-      <p className="text-sm text-stone-500">
+      <p className="text-sm text-ink-2">
         {filtrados.length === 0
           ? "Ningún espacio coincide con tu búsqueda."
           : `${filtrados.length} ${filtrados.length === 1 ? "espacio disponible" : "espacios disponibles"}.`}
       </p>
 
-      <ul className="divide-y divide-stone-100 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+      <ul className="divide-y divide-border-soft overflow-hidden rounded-2xl border border-border-warm bg-surface shadow-sm">
         {filtrados.map((place) => {
           const cargando = isPending && pendingId === place.id;
           return (
@@ -110,11 +109,16 @@ export default function ClaimList({ places }: { places: Place[] }) {
               className="flex items-center justify-between gap-4 px-4 py-3"
             >
               <div className="min-w-0">
-                <p className="truncate font-medium text-stone-900">
-                  <span aria-hidden>{TIPO_EMOJI[place.tipo]}</span> {place.nombre}
+                <p className="flex items-center gap-1.5 truncate font-medium text-ink">
+                  <Icon
+                    name={TIPO_ICON[place.tipo]}
+                    className="h-4 w-4 shrink-0 text-ink-3"
+                  />
+                  {place.nombre}
                 </p>
-                <p className="truncate text-xs text-stone-500">
-                  {TIPO_LABEL[place.tipo]} · 📍 {place.comuna}
+                <p className="inline-flex items-center gap-1 truncate text-xs text-ink-2">
+                  {TIPO_LABEL[place.tipo]} <span aria-hidden>·</span>
+                  <PinIcon className="h-3 w-3" /> {place.comuna}
                 </p>
               </div>
               <button

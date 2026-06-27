@@ -5,22 +5,23 @@ import { useActionState, useState } from "react";
 
 import { signup, type AuthState } from "@/lib/auth/actions";
 import { ErrorAlert, Field, SubmitButton, SuccessAlert } from "@/components/auth/AuthUI";
+import { Icon, type IconName } from "@/components/icons";
 import type { UserRole } from "@/lib/types";
 
 const INITIAL: AuthState = {};
 
-const ROLES: { value: UserRole; titulo: string; desc: string; emoji: string }[] = [
+const ROLES: { value: UserRole; titulo: string; desc: string; icon: IconName }[] = [
   {
     value: "usuario",
     titulo: "Usuario",
     desc: "Busca espacios, guarda favoritos y usa tu wallet.",
-    emoji: "🎒",
+    icon: "mochila",
   },
   {
     value: "empresa",
     titulo: "Empresa",
     desc: "Reclama o publica tus espacios y gestiónalos.",
-    emoji: "🏢",
+    icon: "empresa",
   },
 ];
 
@@ -44,7 +45,7 @@ export default function RegistroForm({
     return (
       <div className="space-y-4">
         <SuccessAlert message={state.message} />
-        <p className="text-sm text-stone-600">
+        <p className="text-sm text-ink-2">
           ¿Ya confirmaste?{" "}
           <Link href="/login" className="font-semibold text-brand hover:underline">
             Inicia sesión
@@ -59,7 +60,7 @@ export default function RegistroForm({
       <ErrorAlert message={state.error} />
 
       <fieldset>
-        <legend className="block text-sm font-medium text-stone-700">
+        <legend className="block text-sm font-medium text-ink-2">
           Tipo de cuenta
         </legend>
         <div className="mt-2 grid grid-cols-2 gap-3">
@@ -71,7 +72,7 @@ export default function RegistroForm({
                 className={`cursor-pointer rounded-xl border p-3 transition-colors focus-within:ring-2 focus-within:ring-brand/40 ${
                   seleccionado
                     ? "border-brand bg-brand/5 ring-1 ring-brand"
-                    : "border-stone-200 bg-white hover:border-stone-300"
+                    : "border-border-warm bg-surface hover:border-border-warm"
                 }`}
               >
                 <input
@@ -82,13 +83,14 @@ export default function RegistroForm({
                   onChange={() => setRol(opcion.value)}
                   className="sr-only"
                 />
-                <span className="text-xl" aria-hidden>
-                  {opcion.emoji}
-                </span>
-                <span className="mt-1 block text-sm font-semibold text-stone-900">
+                <Icon
+                  name={opcion.icon}
+                  className={`h-6 w-6 ${seleccionado ? "text-brand" : "text-ink-3"}`}
+                />
+                <span className="mt-1 block text-sm font-semibold text-ink">
                   {opcion.titulo}
                 </span>
-                <span className="mt-0.5 block text-xs leading-snug text-stone-500">
+                <span className="mt-0.5 block text-xs leading-snug text-ink-2">
                   {opcion.desc}
                 </span>
               </label>
@@ -136,7 +138,7 @@ export default function RegistroForm({
 
       <SubmitButton>Crear cuenta</SubmitButton>
 
-      <p className="text-center text-xs text-stone-500">
+      <p className="text-center text-xs text-ink-2">
         Te enviaremos un correo para confirmar tu cuenta.
       </p>
     </form>

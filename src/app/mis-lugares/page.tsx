@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { CorazonIcon } from "@/components/icons";
 import { requireUser } from "@/lib/auth/dal";
 import { getFavoritePlaces } from "@/lib/favorites/data";
 import MisLugaresGrid from "./MisLugaresGrid";
@@ -22,10 +23,10 @@ export default async function MisLugaresPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <header className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight text-stone-900">
+        <h1 className="text-3xl font-bold tracking-tight text-ink">
           Mis lugares
         </h1>
-        <p className="mt-1 text-stone-600">
+        <p className="mt-1 text-ink-2">
           {places.length === 0
             ? "Aún no has guardado ningún espacio."
             : `${places.length} ${places.length === 1 ? "espacio guardado" : "espacios guardados"}.`}
@@ -33,14 +34,12 @@ export default async function MisLugaresPage() {
       </header>
 
       {places.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-stone-300 bg-white p-10 text-center">
-          <p className="text-4xl" aria-hidden>
-            🤍
-          </p>
-          <h2 className="mt-3 text-lg font-semibold text-stone-900">
+        <div className="rounded-2xl border border-dashed border-border-warm bg-surface p-10 text-center">
+          <CorazonIcon className="mx-auto h-12 w-12 text-ink-3" />
+          <h2 className="mt-3 text-lg font-semibold text-ink">
             Guarda tus espacios favoritos
           </h2>
-          <p className="mx-auto mt-1 max-w-md text-sm text-stone-500">
+          <p className="mx-auto mt-1 max-w-md text-sm text-ink-2">
             Pulsa el corazón en cualquier espacio para guardarlo aquí y volver a
             encontrarlo rápido.
           </p>

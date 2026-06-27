@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { AlertaIcon, WalletIcon } from "@/components/icons";
 import { requireUser } from "@/lib/auth/dal";
 import { formatCLP } from "@/lib/constants";
 import { TX_TIPO_LABEL } from "@/lib/display";
@@ -40,8 +41,8 @@ export default async function WalletPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
       <header className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight text-stone-900">Wallet</h1>
-        <p className="mt-1 text-stone-600">
+        <h1 className="text-3xl font-bold tracking-tight text-ink">Wallet</h1>
+        <p className="mt-1 text-ink-2">
           Recarga créditos y revisa tus movimientos.
         </p>
       </header>
@@ -51,9 +52,7 @@ export default async function WalletPage() {
         role="note"
         className="mb-6 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900"
       >
-        <span aria-hidden className="text-lg leading-none">
-          ⚠️
-        </span>
+        <AlertaIcon className="mt-0.5 h-5 w-5 shrink-0 text-amber-700" />
         <p>
           <span className="font-semibold">Saldo de demostración.</span> Estos son
           créditos ficticios para probar la experiencia:{" "}
@@ -63,17 +62,17 @@ export default async function WalletPage() {
       </div>
 
       {/* Saldo actual */}
-      <section className="rounded-2xl border border-brand/20 bg-gradient-to-br from-brand/5 to-white p-6 shadow-sm">
-        <h2 className="text-sm font-medium text-stone-500">Saldo disponible</h2>
-        <p className="mt-1 text-4xl font-bold tracking-tight text-stone-900">
+      <section className="rounded-2xl border border-brand/20 bg-gradient-to-br from-brand/5 to-surface p-6 shadow-sm">
+        <h2 className="text-sm font-medium text-ink-2">Saldo disponible</h2>
+        <p className="mt-1 text-4xl font-bold tracking-tight text-ink">
           {formatCLP(saldo)}
         </p>
-        <p className="mt-1 text-xs text-stone-500">Créditos de demostración (CLP).</p>
+        <p className="mt-1 text-xs text-ink-2">Créditos de demostración (CLP).</p>
       </section>
 
       {/* Recargar */}
       <section className="mt-6">
-        <h2 className="mb-3 text-lg font-semibold text-stone-900">
+        <h2 className="mb-3 text-lg font-semibold text-ink">
           Recargar saldo
         </h2>
         <WalletRecarga />
@@ -81,22 +80,20 @@ export default async function WalletPage() {
 
       {/* Historial de movimientos */}
       <section className="mt-8">
-        <h2 className="mb-3 text-lg font-semibold text-stone-900">Movimientos</h2>
+        <h2 className="mb-3 text-lg font-semibold text-ink">Movimientos</h2>
         {movimientos.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-stone-300 bg-white p-10 text-center">
-            <p className="text-4xl" aria-hidden>
-              👛
-            </p>
-            <h3 className="mt-3 text-base font-semibold text-stone-900">
+          <div className="rounded-2xl border border-dashed border-border-warm bg-surface p-10 text-center">
+            <WalletIcon className="mx-auto h-12 w-12 text-ink-3" />
+            <h3 className="mt-3 text-base font-semibold text-ink">
               Aún no tienes movimientos
             </h3>
-            <p className="mx-auto mt-1 max-w-sm text-sm text-stone-500">
+            <p className="mx-auto mt-1 max-w-sm text-sm text-ink-2">
               Haz tu primera recarga arriba para empezar a usar tu saldo de
               demostración.
             </p>
           </div>
         ) : (
-          <ul className="divide-y divide-stone-100 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+          <ul className="divide-y divide-border-soft overflow-hidden rounded-2xl border border-border-warm bg-surface shadow-sm">
             {movimientos.map((tx) => (
               <MovimientoFila key={tx.id} tx={tx} />
             ))}
@@ -116,8 +113,8 @@ function MovimientoFila({ tx }: { tx: WalletTx }) {
   return (
     <li className="flex items-center justify-between gap-4 px-4 py-3">
       <div className="min-w-0">
-        <p className="font-medium text-stone-900">{TX_TIPO_LABEL[tx.tipo]}</p>
-        <p className="truncate text-xs text-stone-500">
+        <p className="font-medium text-ink">{TX_TIPO_LABEL[tx.tipo]}</p>
+        <p className="truncate text-xs text-ink-2">
           {tx.glosa ?? "Movimiento de saldo"} · {FECHA_FMT.format(new Date(tx.created_at))}
         </p>
       </div>

@@ -2,6 +2,8 @@
 
 import { useEffect } from "react";
 
+import { AlertaIcon } from "@/components/icons";
+
 /**
  * Error boundary global (F5). Envuelve las rutas dentro del layout raíz, así que
  * mantiene Navbar/Footer y muestra una pantalla de error en español con opción
@@ -21,13 +23,11 @@ export default function Error({
 
   return (
     <div className="mx-auto flex max-w-md flex-col items-center px-4 py-20 text-center">
-      <p className="text-5xl" aria-hidden>
-        ⚠️
-      </p>
-      <h1 className="mt-4 text-2xl font-bold tracking-tight text-stone-900">
+      <AlertaIcon className="h-12 w-12 text-peach-ink" />
+      <h1 className="mt-4 text-2xl font-bold tracking-tight text-ink">
         Algo salió mal
       </h1>
-      <p className="mt-2 text-sm text-stone-600">
+      <p className="mt-2 text-sm text-ink-2">
         Ocurrió un error inesperado al cargar esta página. Puedes intentarlo de
         nuevo; si el problema persiste, vuelve más tarde.
       </p>
