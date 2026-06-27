@@ -43,6 +43,16 @@ function imagenEnDominio(url: string): boolean {
   return url.startsWith(PUBLIC_MENU_PREFIX);
 }
 
+/**
+ * True si la URL es del bucket `menu` Y vive en el folder `${placeId}/` (la
+ * convención de subida es `{place_id}/{uuid}.{ext}`). Evita que un dueño guarde en
+ * su ficha una imagen del folder de OTRO espacio; va en línea con la policy de
+ * Storage acotada por dueño del 0008.
+ */
+function imagenDeEspacio(url: string, placeId: string): boolean {
+  return url.startsWith(`${PUBLIC_MENU_PREFIX}${placeId}/`);
+}
+
 /** Ruta interna del objeto en el bucket a partir de su URL pública, o null. */
 function pathDeImagen(url: string | null): string | null {
   if (!url || !url.startsWith(PUBLIC_MENU_PREFIX)) return null;
@@ -126,6 +136,10 @@ export async function crearItem(
   const parsed = parseMenuForm(formData);
   if (!parsed.payload) return { fieldErrors: parsed.fieldErrors };
 
+  if (parsed.payload.imagen_url && !imagenDeEspacio(parsed.payload.imagen_url, placeId)) {
+    return { fieldErrors: { imagen_url: "La imagen no es válida. Vuelve a subirla." } };
+  }
+
   const supabase = await createClient();
   const { error } = await supabase
     .from("menu_items")
@@ -156,7 +170,20 @@ export async function actualizarItem(
   const parsed = parseMenuForm(formData);
   if (!parsed.payload) return { fieldErrors: parsed.fieldErrors };
 
+  if (parsed.payload.imagen_url && !imagenDeEspacio(parsed.payload.imagen_url, placeId)) {
+    return { fieldErrors: { imagen_url: "La imagen no es válida. Vuelve a subirla." } };
+  }
+
   const supabase = await createClient();
+  // Imagen previa: si el dueño la reemplazó o quitó, hay que limpiar el objeto
+  // huérfano del bucket tras guardar (la nueva ya está subida por el cliente).
+  const { data: previo } = await supabase
+    .from("menu_items")
+    .select("imagen_url")
+    .eq("id", id)
+    .eq("place_id", placeId)
+    .maybeSingle();
+
   const { data, error } = await supabase
     .from("menu_items")
     .update(parsed.payload)
@@ -167,6 +194,13 @@ export async function actualizarItem(
 
   if (error) return { error: "No pudimos guardar los cambios. Inténtalo de nuevo." };
   if (!data) return { error: "No encontramos el ítem." };
+
+  // Limpieza best-effort de la imagen anterior si cambió (no bloquea el éxito).
+  const prevUrl = (previo?.imagen_url as string | null) ?? null;
+  if (prevUrl && prevUrl !== parsed.payload.imagen_url) {
+    const prevPath = pathDeImagen(prevUrl);
+    if (prevPath) await supabase.storage.from("menu").remove([prevPath]);
+  }
 
   revalidarMenu(placeId, place.slug);
   return { ok: true };

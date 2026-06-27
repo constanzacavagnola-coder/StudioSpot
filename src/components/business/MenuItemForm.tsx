@@ -7,7 +7,7 @@ import { useFormStatus } from "react-dom";
 import { EquisIcon, ImagenIcon } from "@/components/icons";
 import type { MenuItemFormState } from "@/lib/menu/actions";
 import { crearItem, actualizarItem } from "@/lib/menu/actions";
-import { subirImagenMenu } from "@/lib/menu/upload";
+import { eliminarImagenMenu, subirImagenMenu } from "@/lib/menu/upload";
 import type { MenuItem } from "@/lib/types";
 
 /**
@@ -44,26 +44,40 @@ export default function MenuItemForm({ placeId, item, onDone }: Props) {
 
   const [subiendo, setSubiendo] = useState(false);
   const [imgError, setImgError] = useState<string | null>(null);
+  // Path de una imagen subida en ESTA sesión y aún no persistida (en un ref: no
+  // afecta el render, solo sirve para limpieza). Si se reemplaza o se quita antes
+  // de guardar, se borra del bucket para no dejar huérfanos. La imagen original de
+  // un ítem en edición NO se rastrea aquí (la limpia el server al guardar si
+  // cambió), así que cancelar no borra la imagen ya guardada.
+  const subidaPathRef = useRef<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const fe = state.fieldErrors ?? {};
 
   // En cuanto la Action confirma el guardado (state.ok), cerrar el panel. La
   // revalidación de la ruta ya ocurrió en el servidor, así que la lista superior
-  // mostrará el cambio al re-renderizar.
+  // mostrará el cambio al re-renderizar. La imagen ya quedó persistida: se olvida
+  // el path de sesión para no borrarla.
   useEffect(() => {
-    if (state.ok) onDone();
+    if (state.ok) {
+      subidaPathRef.current = null;
+      onDone();
+    }
   }, [state.ok, onDone]);
 
   async function onArchivo(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    const previa = subidaPathRef.current;
     setImgError(null);
     setSubiendo(true);
     const res = await subirImagenMenu(placeId, file);
     setSubiendo(false);
     if (res.url) {
+      // Reemplazo: limpiar la subida de sesión anterior (huérfana).
+      if (previa && previa !== res.path) void eliminarImagenMenu(previa);
       setImagenUrl(res.url);
+      subidaPathRef.current = res.path;
       return;
     }
     setImgError(res.error ?? "No pudimos subir la imagen. Inténtalo de nuevo.");
@@ -71,6 +85,9 @@ export default function MenuItemForm({ placeId, item, onDone }: Props) {
   }
 
   function quitarImagen() {
+    // Solo se borra del bucket si era una subida de esta sesión (no la original).
+    if (subidaPathRef.current) void eliminarImagenMenu(subidaPathRef.current);
+    subidaPathRef.current = null;
     setImagenUrl("");
     setImgError(null);
     if (fileRef.current) fileRef.current.value = "";
@@ -149,9 +166,9 @@ export default function MenuItemForm({ placeId, item, onDone }: Props) {
 
       {/* Imagen del producto */}
       <div className="space-y-2">
-        <span className="block text-sm font-medium text-ink-2">
+        <label htmlFor="imagen-menu" className="block text-sm font-medium text-ink-2">
           Imagen <span className="font-normal">(opcional)</span>
-        </span>
+        </label>
 
         <div className="flex items-center gap-4">
           <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-border-warm bg-background-alt">
@@ -173,6 +190,7 @@ export default function MenuItemForm({ placeId, item, onDone }: Props) {
           <div className="space-y-2">
             <input
               ref={fileRef}
+              id="imagen-menu"
               type="file"
               accept="image/jpeg,image/png,image/webp"
               onChange={onArchivo}

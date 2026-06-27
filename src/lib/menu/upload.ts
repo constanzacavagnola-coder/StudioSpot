@@ -15,8 +15,8 @@ import {
 import { createClient } from "@/lib/supabase/client";
 
 export type SubirImagenResult =
-  | { url: string; error?: undefined }
-  | { url?: undefined; error: string };
+  | { url: string; path: string; error?: undefined }
+  | { url?: undefined; path?: undefined; error: string };
 
 function esMimeValido(t: string): t is MenuImgMime {
   return (MENU_IMG_MIME as readonly string[]).includes(t);
@@ -52,5 +52,17 @@ export async function subirImagenMenu(
   }
 
   const { data } = supabase.storage.from("menu").getPublicUrl(path);
-  return { url: data.publicUrl };
+  return { url: data.publicUrl, path };
+}
+
+/**
+ * Borra un objeto del bucket `menu` (best-effort). Se usa para limpiar imágenes
+ * subidas en el formulario que quedaron huérfanas al reemplazarlas o quitarlas
+ * antes de guardar. La policy de Storage (0008) solo deja borrar objetos del
+ * folder de un `place` propio.
+ */
+export async function eliminarImagenMenu(path: string): Promise<void> {
+  if (!path) return;
+  const supabase = createClient();
+  await supabase.storage.from("menu").remove([path]);
 }
