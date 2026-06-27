@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useId, useMemo, useRef, useState, useTransition } from "react";
 
 import {
@@ -49,6 +50,7 @@ export default function MenuCompra({
   isAuthenticated: boolean;
   saldo: number;
 }) {
+  const router = useRouter();
   const [carrito, setCarrito] = useState<Carrito>(new Map());
   const [confirmando, setConfirmando] = useState(false);
   const [resultado, setResultado] = useState<
@@ -178,6 +180,10 @@ export default function MenuCompra({
             setResultado(res);
             setConfirmando(false);
             limpiar();
+            // Re-renderiza el Server Component para traer stock y saldo frescos
+            // (el revalidatePath del server marca el cache; sin refresh las props
+            // `items`/`saldo` quedarían con los valores de la carga inicial).
+            router.refresh();
           }}
         />
       ) : null}
@@ -344,14 +350,50 @@ function DialogoConfirmacion({
   const [error, setError] = useState<string | null>(null);
   const tituloId = useId();
   const confirmarRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   const noAlcanza = total > saldo;
 
-  // Cerrar con Escape y enfocar el botón principal al abrir (a11y de modal).
+  // Al abrir: bloquear el scroll del fondo, enfocar el botón principal y, al
+  // cerrar, devolver el foco al elemento que abrió el diálogo (a11y de modal).
   useEffect(() => {
+    const previo = document.activeElement as HTMLElement | null;
+    const overflowPrevio = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     confirmarRef.current?.focus();
+    return () => {
+      document.body.style.overflow = overflowPrevio;
+      previo?.focus?.();
+    };
+  }, []);
+
+  // Escape para cerrar y trampa de foco (Tab/Shift+Tab cicla dentro del panel,
+  // para que el teclado no se escape al contenido de fondo).
+  useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape" && !pending) onCerrar();
+      if (e.key === "Escape") {
+        if (!pending) onCerrar();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const panel = panelRef.current;
+      if (!panel) return;
+      const focusables = panel.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), a[href], input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+      if (focusables.length === 0) return;
+      const primero = focusables[0];
+      const ultimo = focusables[focusables.length - 1];
+      const activo = document.activeElement;
+      if (e.shiftKey) {
+        if (activo === primero || !panel.contains(activo)) {
+          e.preventDefault();
+          ultimo.focus();
+        }
+      } else if (activo === ultimo || !panel.contains(activo)) {
+        e.preventDefault();
+        primero.focus();
+      }
     }
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
@@ -385,7 +427,10 @@ function DialogoConfirmacion({
         tabIndex={-1}
       />
 
-      <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-border-warm bg-surface shadow-xl">
+      <div
+        ref={panelRef}
+        className="relative w-full max-w-md overflow-hidden rounded-2xl border border-border-warm bg-surface shadow-xl"
+      >
         <div className="flex items-start justify-between gap-3 border-b border-border-soft px-5 py-4">
           <h3 id={tituloId} className="text-lg font-semibold text-ink">
             Confirmar pedido
